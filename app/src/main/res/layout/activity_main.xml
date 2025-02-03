@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1C1C1E">
+
+    <!-- Logo Image -->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="305dp"
+        android:layout_height="305dp"
+        android:layout_marginTop="48dp"
+        android:src="@drawable/musikanoir1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Login Button -->
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="347dp"
+        android:layout_height="55dp"
+        android:text="Log In"
+        android:textColor="#454545"
+        android:backgroundTint="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="50dp" />
+
+    <!-- Sign Up Button -->
+    <Button
+        android:id="@+id/btnSignUp"
+        android:layout_width="347dp"
+        android:layout_height="55dp"
+        android:text="Sign Up"
+        android:textColor="#454545"
+        android:backgroundTint="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/btnLogin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="15dp" />
+
+    <!-- Google Sign-In -->
+    <Button
+        android:id="@+id/btnGoogle"
+        android:layout_width="347dp"
+        android:layout_height="55dp"
+        android:text="Continue With Google Account"
+        android:textColor="#454545"
+        android:backgroundTint="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/btnSignUp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="15dp" />
+
+    <!-- Facebook Sign-In -->
+    <Button
+        android:id="@+id/btnFacebook"
+        android:layout_width="347dp"
+        android:layout_height="55dp"
+        android:text="Continue With Facebook"
+        android:textColor="#454545"
+        android:backgroundTint="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/btnGoogle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="15dp" />
+
+    <!-- Facebook Icon -->
+    <ImageView
+        android:id="@+id/imgFacebook"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/icons8facebook4801"
+        app:layout_constraintTop_toBottomOf="@id/btnFacebook"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="-48dp" />
+
+    <!-- Forgot Password -->
+    <TextView
+        android:id="@+id/txtForgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Forgot Password?"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/btnFacebook"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="50dp" />
+
+    <!-- Bottom Navigation Bar -->
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="84dp"
+        android:background="#FAFAFA"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_home" />
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_search" />
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_plus" />
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_notifications" />
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_profile" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
