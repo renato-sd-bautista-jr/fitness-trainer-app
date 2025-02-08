@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardBackgroundColor="#A6A6A6"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Exercise Image -->
+        <ImageView
+            android:id="@+id/exerciseImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/musikanoir1" />
+
+        <!-- Exercise Name -->
+        <TextView
+            android:id="@+id/exerciseName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_toEndOf="@id/exerciseImage"
+            android:text="Cardio Workout"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- Duration -->
+        <TextView
+            android:id="@+id/exerciseDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/exerciseName"
+            android:layout_marginStart="12dp"
+            android:layout_toEndOf="@id/exerciseImage"
+            android:text="Duration: 30 min"
+            android:textColor="@color/colorTextSecondary"
+            android:textSize="14sp" />
+
+        <!-- Price (Top Right) -->
+        <TextView
+            android:id="@+id/exercisePrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="$15"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- Learn More Button -->
+        <Button
+            android:id="@+id/btnLearnMore"
+            style="@style/Button.Secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/exerciseDuration"
+            android:layout_marginStart="12dp"
+            android:layout_toEndOf="@id/exerciseImage"
+            android:text="Learn More" />
+
+        <!-- Book Now Button -->
+        <Button
+            android:id="@+id/btnBookNow"
+            style="@style/Button.Primary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/exercisePrice"
+            android:layout_alignParentEnd="true"
+            android:text="Book Now" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
