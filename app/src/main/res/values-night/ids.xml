@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="etFullName" type="id" />
+    <item name="etUsername" type="id" />
+    <item name="etConfirmPassword" type="id" />
+    <item name="etMobileNumber" type="id" />
+    <item name="btnRegister" type="id" />
+    <item name="tvLogin" type="id" />
+</resources>

@@ -16,6 +16,10 @@
     <!-- Text Colors -->
     <color name="colorTextPrimary">#212121</color> <!-- Dark Text -->
     <color name="colorTextSecondary">#757575</color> <!-- Light Gray Text -->
+    <color name="purple_200">#BB86FC</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="teal_200">#03DAC5</color>
+    <color name="teal_700">#018786</color>
 
     <!-- Other UI Colors -->
     <color name="colorError">#D32F2F</color> <!-- Red -->

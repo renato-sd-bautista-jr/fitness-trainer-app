@@ -10,9 +10,19 @@
         <item name="android:textColorSecondary">@color/colorTextSecondary</item>
     </style>
 
+
     <style name="AppTheme" parent="Theme.MaterialComponents.Light">
         <item name="android:fontFamily">@font/poppins_regular</item>
         <item name="android:textColorPrimary">#000000</item>
+    </style>
+    <style name="Theme.Scratch.NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar" />
+
+
+    <style name="EditTextStyle">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:background">@android:color/transparent</item> <!-- Transparent background -->
+        <item name="android:paddingBottom">8dp</item>
     </style>
 
     <!-- Bold Text -->
@@ -35,7 +45,7 @@
     </style>
 
     <!-- Time Text -->
-    <style name="TimeText">
+        <style name="TimeText">
         <item name="android:textSize">13sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#000000</item>
