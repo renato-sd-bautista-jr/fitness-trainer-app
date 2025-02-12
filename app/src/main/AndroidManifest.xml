@@ -49,5 +49,17 @@
             android:exported="true"
             android:theme="@style/Theme.Scratch.NoActionBar"/>
 
+
+        <activity android:name=".TrainerListActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Scratch.NoActionBar"/>
+
+        <activity android:name=".TrainerProfileActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Scratch.NoActionBar"/>
+
+        <activity android:name=".ConfirmationActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Scratch.NoActionBar"/>
     </application>
 </manifest>

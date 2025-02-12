@@ -2,80 +2,66 @@ package com.example.scratch;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.textfield.TextInputEditText;
-import java.util.ArrayList;
-import java.util.List;
 
 public class WorkoutActivity extends AppCompatActivity {
 
-    private WorkoutAdapter workoutAdapter;
-    private List<String> workoutList, filteredList;
+    LinearLayout hypertrophyLayout, strengthLayout, cardioLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout);
 
-        RecyclerView recyclerViewWorkouts = findViewById(R.id.recyclerViewWorkouts);
-        TextInputEditText etSearchWorkout = findViewById(R.id.etSearchWorkout);
+        hypertrophyLayout = findViewById(R.id.rh5g8is0bbmw);
+        strengthLayout = findViewById(R.id.rr0hf84q8jfp);
+        cardioLayout = findViewById(R.id.r1gqbxct37cu);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
-        // Sample workouts
-        workoutList = new ArrayList<>();
-        workoutList.add("Push-ups");
-        workoutList.add("Squats");
-        workoutList.add("Burpees");
-        workoutList.add("Plank");
-        workoutList.add("Jump Rope");
-
-        // Set up RecyclerView
-        filteredList = new ArrayList<>(workoutList);
-        workoutAdapter = new WorkoutAdapter(filteredList);
-        recyclerViewWorkouts.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewWorkouts.setAdapter(workoutAdapter);
-
-        // Search functionality
-        etSearchWorkout.addTextChangedListener(new TextWatcher() {
+        hypertrophyLayout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                filterWorkouts(charSequence.toString());
+            public void onClick(View v) {
+                navigateToTrainers("Hypertrophy");
             }
-
-            @Override
-            public void afterTextChanged(Editable editable) {}
         });
 
-        // Handle Bottom Navigation Clicks
+        strengthLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateToTrainers("Strength");
+            }
+        });
+
+        cardioLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateToTrainers("Cardio");
+            }
+        });
+
+        // Bottom Navigation Click Handling
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
 
-                if (itemId == R.id.nav_home) {
-                    startActivity(new Intent(WorkoutActivity.this, HomeDashboardActivity.class));
-                    return true;
-                } else if (itemId == R.id.nav_dashboard) {
+                if (itemId == R.id.nav_dashboard) {
                     startActivity(new Intent(WorkoutActivity.this, DashboardActivity.class));
+                    finish();
                     return true;
+
                 } else if (itemId == R.id.nav_schedule) {
                     startActivity(new Intent(WorkoutActivity.this, ScheduleActivity.class));
+                    finish();
                     return true;
+
                 } else if (itemId == R.id.nav_workouts) {
-                    return true; // Already in Workouts
-                } else if (itemId == R.id.nav_trainers) {
-                    startActivity(new Intent(WorkoutActivity.this, TrainerActivity.class));
-                    return true;
+                    return true; // Already in Workout Activity
                 }
 
                 return false;
@@ -86,13 +72,9 @@ public class WorkoutActivity extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.nav_workouts);
     }
 
-    private void filterWorkouts(String query) {
-        filteredList.clear();
-        for (String workout : workoutList) {
-            if (workout.toLowerCase().contains(query.toLowerCase())) {
-                filteredList.add(workout);
-            }
-        }
-        workoutAdapter.notifyDataSetChanged();
+    private void navigateToTrainers(String workoutType) {
+        Intent intent = new Intent(WorkoutActivity.this, TrainerListActivity.class);
+        intent.putExtra("WorkoutType", workoutType);
+        startActivity(intent);
     }
 }

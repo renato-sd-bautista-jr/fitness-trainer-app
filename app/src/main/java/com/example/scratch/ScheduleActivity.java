@@ -63,23 +63,19 @@ public class ScheduleActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
 
-                if (itemId == R.id.nav_home) {
-                    startActivity(new Intent(ScheduleActivity.this, HomeDashboardActivity.class));
-                    return true;
-                } else if (itemId == R.id.nav_dashboard) {
+
+               if (itemId == R.id.nav_dashboard) {
                     startActivity(new Intent(ScheduleActivity.this, DashboardActivity.class));
                     return true;
-                } else if (itemId == R.id.nav_schedule) {
-                    return true; // Already in Schedule
-                } else if (itemId == R.id.nav_workouts) {
-                    startActivity(new Intent(ScheduleActivity.this, WorkoutActivity.class));
-                    return true;
-                } else if (itemId == R.id.nav_trainers) {
-                    startActivity(new Intent(ScheduleActivity.this, TrainerActivity.class));
-                    return true;
-                }
 
-                return false;
+                   } else if (itemId == R.id.nav_schedule) {
+                       return true;
+                   } else if (itemId == R.id.nav_workouts) {
+                       startActivity(new Intent(ScheduleActivity.this, WorkoutActivity.class));
+                       return true;
+                   }
+
+                   return false;
             }
         });
 

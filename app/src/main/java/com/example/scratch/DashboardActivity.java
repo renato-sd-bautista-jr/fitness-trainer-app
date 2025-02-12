@@ -23,10 +23,8 @@ public class DashboardActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
 
-                if (itemId == R.id.nav_home) {
-                    startActivity(new Intent(DashboardActivity.this, HomeDashboardActivity.class));
-                    return true;
-                } else if (itemId == R.id.nav_dashboard) {
+
+                if (itemId == R.id.nav_dashboard) {
                     // Already in Dashboard, no need to switch
                     return true;
                 } else if (itemId == R.id.nav_schedule) {
@@ -34,9 +32,6 @@ public class DashboardActivity extends AppCompatActivity {
                     return true;
                 } else if (itemId == R.id.nav_workouts) {
                     startActivity(new Intent(DashboardActivity.this, WorkoutActivity.class));
-                    return true;
-                } else if (itemId == R.id.nav_trainer) {
-                    startActivity(new Intent(DashboardActivity.this, TrainerActivity.class));
                     return true;
                 }
 

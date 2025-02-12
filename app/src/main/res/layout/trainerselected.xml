@@ -1,4 +1,4 @@
-<LinearLayout
+ <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -44,113 +44,8 @@
                     android:text="WORKOUT"
                     />
             </LinearLayout>
-            <LinearLayout
-                android:id="@+id/rz6k5nxvihco"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:background="#FEF7FF"
-                android:orientation="vertical">
-                <LinearLayout
-                    android:id="@+id/r7ptgpk5pe85"
-                    android:layout_width="440dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <LinearLayout
-                        android:id="@+id/rvs6j7vfesdf"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
-                        <LinearLayout
-                            android:id="@+id/rh5g8is0bbmw"
-                            android:layout_width="99dp"
-                            android:layout_height="wrap_content"
-                            android:paddingTop="19dp"
-                            android:orientation="vertical">
-                            <TextView
-                                android:id="@+id/rkpei6ls8yrl"
-                                android:textColor="#65558F"
-                                android:textSize="13sp"
-                                android:textStyle="bold"
-                                android:layout_marginBottom="12dp"
-                                android:layout_height="wrap_content"
-                                android:layout_width="match_parent"
-                                android:layout_weight="1"
-                                android:text="HYPERTROPHY"
-                                />
-                            <LinearLayout
-                                android:id="@+id/rwhr42lhw7ys"
-                                android:layout_width="match_parent"
-                                android:layout_height="3dp"
-                                android:background="#65558F"
-                                android:layout_marginHorizontal="2dp"
-                                android:orientation="vertical">
-                            </LinearLayout>
-                        </LinearLayout>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:id="@+id/ryo8zqn6jvtf"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_horizontal"
-                        android:layout_marginEnd="1dp"
-                        android:orientation="vertical">
-                        <LinearLayout
-                            android:id="@+id/rr0hf84q8jfp"
-                            android:layout_width="73dp"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:paddingVertical="19dp"
-                            android:orientation="vertical">
-                            <TextView
-                                android:id="@+id/rlhp9of1o8f"
-                                android:textColor="#49454F"
-                                android:textSize="13sp"
-                                android:textStyle="bold"
-                                android:layout_height="wrap_content"
-                                android:layout_width="wrap_content"
-                                android:text="STRENGTH"
-                                />
-                        </LinearLayout>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:id="@+id/rj71tv4v6xu"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
-                        <LinearLayout
-                            android:id="@+id/r1gqbxct37cu"
-                            android:layout_width="51dp"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:paddingVertical="19dp"
-                            android:orientation="vertical">
-                            <TextView
-                                android:id="@+id/r71qf88088o"
-                                android:textColor="#49454F"
-                                android:textSize="13sp"
-                                android:textStyle="bold"
-                                android:layout_height="wrap_content"
-                                android:layout_width="wrap_content"
-                                android:text="CARDIO"
-                                />
-                        </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/rlbbgjqqb6zg"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#CAC4D0"
-                android:layout_marginBottom="14dp"
-                android:orientation="vertical">
-            </LinearLayout>
+
+
             <LinearLayout
                 android:id="@+id/rcoocbxgrwie"
                 android:layout_width="match_parent"

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="etFullName" type="id" />
+    <item name="bottomNavigationView" type="id"/>
     <item name="etUsername" type="id" />
     <item name="etConfirmPassword" type="id" />
     <item name="etMobileNumber" type="id" />
@@ -22,4 +23,12 @@
     <item name="recyclerViewTrainers" type="id" />
     <item name="nav_trainer" type="id" />
     <item name="nav_dashboard" type="id" />
+    <item name="listAvailableTime" type="id" />
+    <item name="tvDescription" type="id" />
+    <item name="tvSpecialities" type="id" />
+    <item name="btnBack" type="id" />
+    <item name="tvTimeConfirm" type="id" />
+    <item name="btnConfirmBooking" type="id" />
+    <item name="tvDateConfirm" type="id" />
+    <item name="tvTrainerNameConfirm" type="id" />
 </resources>

@@ -60,19 +60,15 @@ public class TrainerActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
 
-                if (itemId == R.id.nav_home) {
-                    startActivity(new Intent(TrainerActivity.this, HomeDashboardActivity.class));
-                    return true;
-                } else if (itemId == R.id.nav_dashboard) {
+                if (itemId == R.id.nav_dashboard) {
                     startActivity(new Intent(TrainerActivity.this, DashboardActivity.class));
                     return true;
-                } else if (itemId == R.id.nav_schedule) {
-                    startActivity(new Intent(TrainerActivity.this, ScheduleActivity.class));
-                    return true;
-                } else if (itemId == R.id.nav_workouts) {
-                    startActivity(new Intent(TrainerActivity.this, WorkoutActivity.class));
-                    return true;
-                } else if (itemId == R.id.nav_trainers) {
+
+                    } else if (itemId == R.id.nav_schedule) {
+                        startActivity(new Intent(TrainerActivity.this, ScheduleActivity.class));
+                        return true;
+
+                } else if (itemId == R.id.nav_trainer) {
                     return true; // Already in Trainer Activity
                 }
 
@@ -81,7 +77,7 @@ public class TrainerActivity extends AppCompatActivity {
         });
 
         // Set default selected item
-        bottomNavigationView.setSelectedItemId(R.id.nav_trainers);
+        bottomNavigationView.setSelectedItemId(R.id.nav_trainer);
     }
 
     private void filterTrainers(String query) {
