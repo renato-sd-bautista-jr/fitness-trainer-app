@@ -6,4 +6,20 @@
     <item name="etMobileNumber" type="id" />
     <item name="btnRegister" type="id" />
     <item name="tvLogin" type="id" />
+    <item name="imgProfile" type="id" />
+    <item name="toggleProgress" type="id" />
+    <item name="btnDay" type="id" />
+    <item name="btnMonth" type="id" />
+    <item name="btnYear" type="id" />
+    <item name="progressIndicator" type="id" />
+    <item name="tvProgressLabel" type="id" />
+    <item name="calendarView" type="id" />
+    <item name="tvSelectedDate" type="id" />
+    <item name="listViewSchedule" type="id" />
+    <item name="etSearchWorkout" type="id" />
+    <item name="recyclerViewWorkouts" type="id" />
+    <item name="etSearchTrainer" type="id" />
+    <item name="recyclerViewTrainers" type="id" />
+    <item name="nav_trainer" type="id" />
+    <item name="nav_dashboard" type="id" />
 </resources>

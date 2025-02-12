@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.scratch">  <!-- Ensure this matches your package name -->
+    package="com.example.scratch">
 
     <application
         android:allowBackup="true"
@@ -13,24 +13,41 @@
         <activity android:name=".LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.Scratch.NoActionBar">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- RegisterActivity -->
         <activity android:name=".RegisterActivity"
             android:exported="true"
-            android:theme="@style/Theme.Scratch.NoActionBar">
+            android:theme="@style/Theme.Scratch.NoActionBar"/>
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <!-- DashboardActivity -->
+        <activity android:name=".DashboardActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Scratch.NoActionBar"/>
 
-        <!-- MainActivity -->
-        <activity android:name=".HomeDashboardActivity" />
+        <!-- HomeDashboardActivity -->
+        <activity android:name=".HomeDashboardActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Scratch.NoActionBar"/>
+
+        <!-- Activity Schedule -->
+        <activity android:name=".ScheduleActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Scratch.NoActionBar"/>
+
+        <!-- Activity Workouts -->
+        <activity android:name=".WorkoutActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Scratch.NoActionBar"/>
+
+        <!-- Activity Trainers -->
+        <activity android:name=".TrainerActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Scratch.NoActionBar"/>
 
     </application>
 </manifest>
