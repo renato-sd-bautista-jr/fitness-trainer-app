@@ -31,4 +31,5 @@
     <item name="btnConfirmBooking" type="id" />
     <item name="tvDateConfirm" type="id" />
     <item name="tvTrainerNameConfirm" type="id" />
+    <item name="etLogin" type="id" />
 </resources>

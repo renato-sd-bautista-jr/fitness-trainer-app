@@ -2,61 +2,95 @@ package com.example.scratch;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.widget.Button;
 import android.widget.TextView;
-import android.text.SpannableString;
-import android.text.Spannable;
-import android.text.style.ForegroundColorSpan;
-import android.graphics.Color;
 import android.widget.Toast;
-
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.example.scratch.R;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private TextInputEditText etEmail, etPassword;
+    private TextInputEditText etLogin;
+    private TextInputEditText etPassword;
     private Button btnLogin;
-    private TextView tvForgotPassword, tvRegister;
+    private TextView tvRegister;
+    private FirebaseAuth mAuth;
+    private DatabaseReference databaseRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        etEmail = findViewById(R.id.etEmail);
+        mAuth = FirebaseAuth.getInstance();
+        databaseRef = FirebaseDatabase.getInstance().getReference("Users");
+
+        etLogin = findViewById(R.id.etLogin);
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
-        tvForgotPassword = findViewById(R.id.tvForgotPassword);
-        tvRegister = findViewById(R.id.tvRegister); // Reference to register text
         tvRegister = findViewById(R.id.tvRegister);
 
-        // Set different colors for "Don't have an account?" and "Register"
-        SpannableString spannable = new SpannableString("Don't have an account? Register");
-        spannable.setSpan(new ForegroundColorSpan(Color.WHITE), 0, 22, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // Black text
-        spannable.setSpan(new ForegroundColorSpan(Color.BLUE), 23, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // Blue text
+        btnLogin.setOnClickListener(v -> loginUser());
 
-        tvRegister.setText(spannable);
+        tvRegister.setOnClickListener(v -> startActivity(new Intent(LoginActivity.this, RegisterActivity.class)));
+    }
 
+    private void loginUser() {
+        String loginInput = etLogin.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
 
-        btnLogin.setOnClickListener(v -> {
-            String email = etEmail.getText().toString().trim();
-            String password = etPassword.getText().toString().trim();
+        if (loginInput.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(LoginActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+        if (Patterns.EMAIL_ADDRESS.matcher(loginInput).matches()) {
+            signInWithEmail(loginInput, password);
+        } else {
+            databaseRef.orderByChild("username").equalTo(loginInput).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult().hasChildren()) {
+                    for (DataSnapshot snapshot : task.getResult().getChildren()) {
+                        String email = snapshot.child("email").getValue(String.class);
+                        if (email != null) {
+                            signInWithEmail(email, password);
+                        }
+                        break;
+                    }
+                } else {
+                    databaseRef.orderByChild("mobileNumber").equalTo(loginInput).get().addOnCompleteListener(task2 -> {
+                        if (task2.isSuccessful() && task2.getResult().hasChildren()) {
+                            for (DataSnapshot snapshot : task2.getResult().getChildren()) {
+                                String email = snapshot.child("email").getValue(String.class);
+                                if (email != null) {
+                                    signInWithEmail(email, password);
+                                }
+                                break;
+                            }
+                        } else {
+                            Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    private void signInWithEmail(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                finish();
             } else {
-                Toast.makeText(LoginActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-                startActivity(intent);
-
-
+                Toast.makeText(this, "Login failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
-
-        tvRegister.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-            startActivity(intent);
         });
     }
 }

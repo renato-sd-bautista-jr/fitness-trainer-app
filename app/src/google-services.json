@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "839124093965",
+    "project_id": "fitnessapp-ee280",
+    "storage_bucket": "fitnessapp-ee280.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:839124093965:android:699b8f5a16dbaa11e59944",
+        "android_client_info": {
+          "package_name": "com.example.scratch"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKjobhbaQNG_yc1sYaarxflIgNQR80yvs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+
+  "configuration_version": "1"
+}

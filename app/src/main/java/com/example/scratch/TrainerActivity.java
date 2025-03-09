@@ -16,17 +16,26 @@ import java.util.List;
 
 public class TrainerActivity extends AppCompatActivity {
 
+    private RecyclerView recyclerViewTrainers;
     private TrainerAdapter trainerAdapter;
     private List<TrainerModel> trainerList, filteredList;
+    private TextInputEditText etSearchTrainer;
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trainer);
 
-        RecyclerView recyclerViewTrainers = findViewById(R.id.recyclerViewTrainers);
-        TextInputEditText etSearchTrainer = findViewById(R.id.etSearchTrainer);
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        // Initialize UI elements
+        recyclerViewTrainers = findViewById(R.id.recyclerViewTrainers);
+        etSearchTrainer = findViewById(R.id.etSearchTrainer);
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+
+        // Check if RecyclerView is properly initialized
+        if (recyclerViewTrainers == null) {
+            throw new NullPointerException("RecyclerView is NULL. Check activity_trainer.xml!");
+        }
 
         // Sample trainer data
         trainerList = new ArrayList<>();
@@ -54,7 +63,7 @@ public class TrainerActivity extends AppCompatActivity {
             public void afterTextChanged(Editable editable) {}
         });
 
-        // Bottom Navigation Click Handling
+        // Bottom Navigation Handling
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -62,11 +71,13 @@ public class TrainerActivity extends AppCompatActivity {
 
                 if (itemId == R.id.nav_dashboard) {
                     startActivity(new Intent(TrainerActivity.this, DashboardActivity.class));
+                    finish(); // Prevent stacking activities
                     return true;
 
-                    } else if (itemId == R.id.nav_schedule) {
-                        startActivity(new Intent(TrainerActivity.this, ScheduleActivity.class));
-                        return true;
+                } else if (itemId == R.id.nav_schedule) {
+                    startActivity(new Intent(TrainerActivity.this, ScheduleActivity.class));
+                    finish();
+                    return true;
 
                 } else if (itemId == R.id.nav_trainer) {
                     return true; // Already in Trainer Activity
@@ -82,9 +93,15 @@ public class TrainerActivity extends AppCompatActivity {
 
     private void filterTrainers(String query) {
         filteredList.clear();
-        for (TrainerModel trainer : trainerList) {
-            if (trainer.getName().toLowerCase().contains(query.toLowerCase())) {
-                filteredList.add(trainer);
+        String lowerCaseQuery = query.toLowerCase().trim();
+
+        if (lowerCaseQuery.isEmpty()) {
+            filteredList.addAll(trainerList);
+        } else {
+            for (TrainerModel trainer : trainerList) {
+                if (trainer.getName().toLowerCase().contains(lowerCaseQuery)) {
+                    filteredList.add(trainer);
+                }
             }
         }
         trainerAdapter.notifyDataSetChanged();
