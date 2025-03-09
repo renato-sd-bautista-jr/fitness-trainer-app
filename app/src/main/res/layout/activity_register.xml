@@ -15,14 +15,15 @@
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginBottom="20dp"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/white" />
 
     <!-- Email Address -->
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Email Address"
-        app:boxBackgroundMode="none">
+        app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etEmail"
@@ -31,14 +32,18 @@
             android:inputType="textEmailAddress"
             style="@style/EditTextStyle"/>
     </com.google.android.material.textfield.TextInputLayout>
-    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@android:color/darker_gray"/>
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="12dp"/>
     <!-- Full Name -->
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Full Name"
-        app:boxBackgroundMode="none">
+        app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etFullName"
@@ -47,14 +52,18 @@
             android:inputType="textPersonName"
             style="@style/EditTextStyle"/>
     </com.google.android.material.textfield.TextInputLayout>
-    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@android:color/darker_gray"/>
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="12dp"/>
     <!-- Username -->
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Username"
-        app:boxBackgroundMode="none">
+        app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etUsername"
@@ -63,46 +72,60 @@
             android:inputType="textPersonName"
             style="@style/EditTextStyle"/>
     </com.google.android.material.textfield.TextInputLayout>
-    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@android:color/darker_gray"/>
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="12dp"/>
     <!-- Password -->
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Password"
-        app:boxBackgroundMode="none">
+        app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
+            android:importantForAutofill="no"
             style="@style/EditTextStyle"/>
     </com.google.android.material.textfield.TextInputLayout>
-    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@android:color/darker_gray"/>
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="12dp"/>
     <!-- Confirm Password -->
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Confirm Password"
-        app:boxBackgroundMode="none">
+        app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etConfirmPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
+            android:importantForAutofill="no"
             style="@style/EditTextStyle"/>
     </com.google.android.material.textfield.TextInputLayout>
-    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@android:color/darker_gray"/>
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="12dp"/>
     <!-- Mobile Number -->
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Mobile Number"
-        app:boxBackgroundMode="none">
+        app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etMobileNumber"
@@ -111,8 +134,11 @@
             android:inputType="phone"
             style="@style/EditTextStyle"/>
     </com.google.android.material.textfield.TextInputLayout>
-    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@android:color/darker_gray"/>
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="12dp"/>
     <!-- Register Button -->
     <Button
         android:id="@+id/btnRegister"
@@ -135,5 +161,4 @@
         android:textSize="14sp"
         android:layout_marginTop="10dp"
         android:layout_gravity="center"/>
-
 </LinearLayout>

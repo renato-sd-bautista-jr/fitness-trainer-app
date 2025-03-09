@@ -17,44 +17,47 @@
         android:layout_marginBottom="20dp"
         android:textColor="@android:color/white" />
 
+
+
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email"
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-        app:boxBackgroundMode="none">
+        app:boxBackgroundMode="none"
+        app:hintEnabled="false"> <!-- Disable default hint behavior -->
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
-            android:text="Email"
+            android:hint="Email"
+            android:textColorHint="@android:color/white"
             style="@style/EditTextStyle" />
     </com.google.android.material.textfield.TextInputLayout>
-
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
         android:layout_marginBottom="12dp"/>
 
+
+
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-        app:boxBackgroundMode="none">
+        app:boxBackgroundMode="none"
+        app:hintEnabled="false">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            
-            android:inputType="textPassword"
+            android:hint="Password"
+            android:textColorHint="@android:color/white"
+            android:inputType="text"
             style="@style/EditTextStyle" />
     </com.google.android.material.textfield.TextInputLayout>
-
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

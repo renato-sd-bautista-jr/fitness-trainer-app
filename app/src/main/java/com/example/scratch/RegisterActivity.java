@@ -19,7 +19,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.example.scratch.R;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -55,6 +54,13 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(v -> registerUser());
 
         tvLogin.setOnClickListener(v -> startActivity(new Intent(RegisterActivity.this, LoginActivity.class)));
+
+        setupHintFocus(etEmail, "Email Address");
+        setupHintFocus(etFullName, "Full Name");
+        setupHintFocus(etUsername, "Username");
+        setupHintFocus(etPassword, "Password");
+        setupHintFocus(etConfirmPassword, "Confirm Password");
+        setupHintFocus(etMobileNumber, "Mobile Number");
     }
 
     private void registerUser() {
@@ -102,6 +108,19 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             } else {
                 Toast.makeText(this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    // Function to handle hint visibility
+    private void setupHintFocus(TextInputEditText editText, String hintText) {
+        editText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                editText.setHint("");
+            } else {
+                if (editText.getText().toString().trim().isEmpty()) {
+                    editText.setHint(hintText);
+                }
             }
         });
     }

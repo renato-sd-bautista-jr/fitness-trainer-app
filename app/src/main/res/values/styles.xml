@@ -21,8 +21,23 @@
     <style name="EditTextStyle">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:background">@android:color/transparent</item> <!-- Transparent background -->
+        <item name="android:background">@android:color/transparent</item>
         <item name="android:paddingBottom">8dp</item>
+        <item name="android:textColorHint">@android:color/white</item>
+        <item name="font">@font/poppins_regular</item>
+    </style>
+
+    <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:textColorHint">@android:color/white</item>
+        <item name="hintTextAppearance">@style/HintTextStyle</item>
+        <item name="boxStrokeColor">@android:color/white</item>
+        <item name="boxBackgroundColor">@android:color/transparent</item>
+    </style>
+
+    <style name="HintTextStyle" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:fontFamily">@font/poppins_regular</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <!-- Bold Text -->
