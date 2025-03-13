@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="@android:color/black">
+    android:background="@android:color/white">
 
+    <!-- Title -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,55 +17,85 @@
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginBottom="20dp"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/black"
+        android:fontFamily="@font/poppins_regular" />
 
 
 
-    <com.google.android.material.textfield.TextInputLayout
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggleLoginMethod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:singleSelection="true"
+        app:checkedButton="@+id/btnEmail"
+        android:layout_marginBottom="16dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEmail"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:text="Email"
+            android:fontFamily="@font/poppins_regular"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUsername"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:text="Username"
+            android:fontFamily="@font/poppins_regular"/>
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <!-- Email/Username Label -->
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-        app:boxBackgroundMode="none"
-        app:hintEnabled="false"> <!-- Disable default hint behavior -->
+        android:text="Email or Username"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:fontFamily="@font/poppins_regular"
+        android:layout_marginBottom="4dp"/>
+
+    <!-- Email/Username Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/TextInputStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:hint="Email"
-            android:textColorHint="@android:color/white"
-            style="@style/EditTextStyle" />
+            android:inputType="text"
+            android:hint="Enter Email or Username"
+            android:fontFamily="@font/poppins_regular"/>
     </com.google.android.material.textfield.TextInputLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"
-        android:layout_marginBottom="12dp"/>
 
-
-
-    <com.google.android.material.textfield.TextInputLayout
+    <!-- Password Label -->
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:boxBackgroundMode="none"
-        app:hintEnabled="false">
+        android:text="Password"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:fontFamily="@font/poppins_regular"
+        android:layout_marginBottom="4dp"/>
+
+    <!-- Password Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/TextInputStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
-            android:textColorHint="@android:color/white"
-            android:inputType="text"
-            style="@style/EditTextStyle" />
+            android:inputType="textPassword"
+            android:hint="Enter Password"
+            android:fontFamily="@font/poppins_regular"/>
     </com.google.android.material.textfield.TextInputLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"
-        android:layout_marginBottom="12dp"/>
 
+    <!-- Forgot Password -->
     <TextView
         android:id="@+id/tvForgotPassword"
         android:layout_width="wrap_content"
@@ -72,8 +104,10 @@
         android:textColor="@android:color/holo_blue_dark"
         android:textSize="14sp"
         android:layout_gravity="end"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/poppins_regular"/>
 
+    <!-- Login Button -->
     <Button
         android:id="@+id/btnLogin"
         android:layout_width="match_parent"
@@ -83,19 +117,41 @@
         android:textColor="@android:color/white"
         android:padding="12dp"
         android:textSize="16sp"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="10dp"
+        android:fontFamily="@font/poppins_regular"/>
+
+    <!-- Trainer Login Placeholder -->
+
+    <Button
+        android:id="@+id/btnTrainerLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Login as Trainer"
+        android:backgroundTint="@android:color/black"
+        android:textColor="@android:color/white"
+        android:padding="12dp"
+        android:textSize="16sp"
+        android:fontFamily="@font/poppins_regular"/>
+
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/btnGoogleSignIn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"/>
+    <!-- Register Link -->
     <TextView
         android:id="@+id/tvRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Don't have an account? Register"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:textSize="14sp"
         android:textStyle="bold"
         android:layout_marginTop="10dp"
         android:layout_gravity="center"
         android:clickable="true"
-        android:focusable="true"/>
-
+        android:focusable="true"
+        android:fontFamily="@font/poppins_regular"/>
 
 </LinearLayout>

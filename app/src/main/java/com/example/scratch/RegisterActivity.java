@@ -2,31 +2,30 @@ package com.example.scratch;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.graphics.Color;
-import android.util.Patterns;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private TextInputEditText etEmail, etFullName, etUsername, etPassword, etConfirmPassword, etMobileNumber;
+    private static final int RC_SIGN_IN = 9001;
+    private FirebaseAuth mAuth;
+    private GoogleSignInClient googleSignInClient;
+    private SignInButton btnGoogleRegister;
     private Button btnRegister;
     private TextView tvLogin;
-    private FirebaseAuth mAuth;
-    private DatabaseReference databaseRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,107 +33,59 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         mAuth = FirebaseAuth.getInstance();
-        databaseRef = FirebaseDatabase.getInstance().getReference("Users");
 
-        etEmail = findViewById(R.id.etEmail);
-        etFullName = findViewById(R.id.etFullName);
-        etUsername = findViewById(R.id.etUsername);
-        etPassword = findViewById(R.id.etPassword);
-        etConfirmPassword = findViewById(R.id.etConfirmPassword);
-        etMobileNumber = findViewById(R.id.etMobileNumber);
+        btnGoogleRegister = findViewById(R.id.btnGoogleRegister);
         btnRegister = findViewById(R.id.btnRegister);
         tvLogin = findViewById(R.id.tvLogin);
 
-        // Styling the login text
-        SpannableString spannable = new SpannableString("Already have an account? Login");
-        spannable.setSpan(new ForegroundColorSpan(Color.WHITE), 0, 22, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannable.setSpan(new ForegroundColorSpan(Color.BLUE), 23, spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        tvLogin.setText(spannable);
-
-        btnRegister.setOnClickListener(v -> registerUser());
-
         tvLogin.setOnClickListener(v -> startActivity(new Intent(RegisterActivity.this, LoginActivity.class)));
 
-        setupHintFocus(etEmail, "Email Address");
-        setupHintFocus(etFullName, "Full Name");
-        setupHintFocus(etUsername, "Username");
-        setupHintFocus(etPassword, "Password");
-        setupHintFocus(etConfirmPassword, "Confirm Password");
-        setupHintFocus(etMobileNumber, "Mobile Number");
+        btnRegister.setOnClickListener(v -> registerWithEmail());
+
+        // Configure Google Sign-In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        googleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        btnGoogleRegister.setOnClickListener(v -> signInWithGoogle());
     }
 
-    private void registerUser() {
-        String email = etEmail.getText().toString().trim();
-        String fullName = etFullName.getText().toString().trim();
-        String username = etUsername.getText().toString().trim();
-        String password = etPassword.getText().toString().trim();
-        String confirmPassword = etConfirmPassword.getText().toString().trim();
-        String mobileNumber = etMobileNumber.getText().toString().trim();
+    private void signInWithGoogle() {
+        Intent signInIntent = googleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
 
-        if (email.isEmpty() || fullName.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || mobileNumber.isEmpty()) {
-            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(this, "Invalid email format", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (!password.equals(confirmPassword)) {
-            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (password.length() < 6) {
-            Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
-            return;
-        }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+        if (requestCode == RC_SIGN_IN) {
+            try {
+                GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
+                firebaseAuthWithGoogle(account.getIdToken());
+            } catch (ApiException e) {
+                Toast.makeText(this, "Google Sign-In Failed!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void firebaseAuthWithGoogle(String idToken) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        mAuth.signInWithCredential(credential).addOnCompleteListener(this, task -> {
             if (task.isSuccessful()) {
-                FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                if (firebaseUser != null) {
-                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                            .setDisplayName(username)
-                            .build();
-                    firebaseUser.updateProfile(profileUpdates);
-
-                    // Save user info in Firebase Realtime Database
-                    String userId = firebaseUser.getUid();
-                    User user = new User(fullName, username, email, mobileNumber);
-                    databaseRef.child(userId).setValue(user);
-
-                    Toast.makeText(this, "Registration Successful!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-                    finish();
-                }
+                FirebaseUser user = mAuth.getCurrentUser();
+                Toast.makeText(this, "Welcome " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(RegisterActivity.this, DashboardActivity.class));
+                finish();
             } else {
-                Toast.makeText(this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Authentication Failed!", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // Function to handle hint visibility
-    private void setupHintFocus(TextInputEditText editText, String hintText) {
-        editText.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                editText.setHint("");
-            } else {
-                if (editText.getText().toString().trim().isEmpty()) {
-                    editText.setHint(hintText);
-                }
-            }
-        });
-    }
-
-    public static class User {
-        public String fullName, username, email, mobileNumber;
-
-        public User() {} // Default constructor for Firebase
-
-        public User(String fullName, String username, String email, String mobileNumber) {
-            this.fullName = fullName;
-            this.username = username;
-            this.email = email;
-            this.mobileNumber = mobileNumber;
-        }
+    private void registerWithEmail() {
+        Toast.makeText(this, "Regular Email Registration Placeholder", Toast.LENGTH_SHORT).show();
     }
 }

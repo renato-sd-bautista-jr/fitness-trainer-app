@@ -17,6 +17,19 @@
     </style>
     <style name="Theme.Scratch.NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar" />
 
+    <style name="TextInputStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@android:color/darker_gray</item>
+        <item name="boxBackgroundColor">@android:color/transparent</item>
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textColorHint">@android:color/darker_gray</item>
+        <item name="android:fontFamily">@font/poppins_regular</item>
+        <item name="android:font">@font/poppins_regular</item>
+    </style>
+
 
     <style name="EditTextStyle">
         <item name="android:textColor">@android:color/white</item>

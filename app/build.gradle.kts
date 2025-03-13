@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.scratch"
-        minSdk = 23
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -23,6 +23,7 @@ dependencies {
     implementation(libs.androidx.coordinatorlayout)
     implementation(libs.material)
     implementation(libs.firebase.auth)
-    implementation(libs.firebase.database) // Firebase Analytics
+    implementation(libs.firebase.database)
+    implementation("com.google.android.gms:play-services-auth:20.7.0")// Firebase Analytics
 }
 
