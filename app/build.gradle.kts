@@ -18,12 +18,19 @@ android {
 }
 
 dependencies {
+    // Firebase BoM (Bill of Materials) - Keeps all Firebase dependencies at the same version
     implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
+
+    // Firebase dependencies
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-database")
+
+    // Google Sign-In
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+
+    // AndroidX and Material components
     implementation(libs.androidx.coordinatorlayout)
     implementation(libs.material)
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.database)
-    implementation("com.google.android.gms:play-services-auth:20.7.0")// Firebase Analytics
+    implementation("androidx.cardview:cardview:1.0.0")
 }
-

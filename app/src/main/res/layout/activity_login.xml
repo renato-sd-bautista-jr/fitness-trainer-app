@@ -22,26 +22,7 @@
 
 
 
-    <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/toggleLoginMethod"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:singleSelection="true"
-        app:checkedButton="@+id/btnEmail"
-        android:layout_marginBottom="16dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnEmail"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:text="Email"
-            android:fontFamily="@font/poppins_regular"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnUsername"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:text="Username"
-            android:fontFamily="@font/poppins_regular"/>
-    </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <!-- Email/Username Label -->
     <TextView
@@ -152,6 +133,7 @@
         android:layout_gravity="center"
         android:clickable="true"
         android:focusable="true"
+        android:padding="10dp"
         android:fontFamily="@font/poppins_regular"/>
 
 </LinearLayout>
