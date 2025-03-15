@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:color/white"
+    android:layout_marginVertical="4dp"
+    android:elevation="2dp">
+
+    <!-- Trainer Name -->
+    <TextView
+        android:id="@+id/tvTrainerName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Trainer Name"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"/>
+
+    <!-- Trainer Proficiency -->
+    <TextView
+        android:id="@+id/tvTrainerProficiency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Specialities: Strength Training"
+        android:textSize="16sp"
+        android:textColor="@android:color/darker_gray"/>
+</LinearLayout>

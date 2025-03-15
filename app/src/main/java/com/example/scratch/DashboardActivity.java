@@ -9,6 +9,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -22,6 +23,7 @@ public class DashboardActivity extends AppCompatActivity {
     private TextView tvGreeting, tvBmiValue;
     private FirebaseAuth mAuth;
     private DatabaseReference userRef;
+    private ImageView ivSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,12 +34,12 @@ public class DashboardActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         String userId = mAuth.getCurrentUser().getUid(); // Get logged-in user ID
 
-
         userRef = FirebaseDatabase.getInstance().getReference("Users").child(userId);
 
         // Initialize UI elements
         tvGreeting = findViewById(R.id.tvGreeting);
         tvBmiValue = findViewById(R.id.tvBmiValue);
+        ivSettings = findViewById(R.id.ivSettings);
 
         // Fetch and display user data
         loadUserData();
@@ -55,7 +57,7 @@ public class DashboardActivity extends AppCompatActivity {
                     startActivity(new Intent(DashboardActivity.this, ScheduleActivity.class));
                     return true;
                 } else if (itemId == R.id.nav_workouts) {
-                    startActivity(new Intent(DashboardActivity.this, WorkoutActivity.class));
+                    startActivity(new Intent(DashboardActivity.this, TrainerListActivity.class));
                     return true;
                 }
                 return false;
@@ -66,14 +68,13 @@ public class DashboardActivity extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.nav_dashboard);
 
         // Handle settings click
-        ImageView ivSettings = findViewById(R.id.ivSettings);
         ivSettings.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(DashboardActivity.this, v);
             popupMenu.getMenuInflater().inflate(R.menu.menu_settings, popupMenu.getMenu());
             popupMenu.setOnMenuItemClickListener(item -> {
                 int itemId = item.getItemId();
                 if (itemId == R.id.menu_profile) {
-                    startActivity(new Intent(DashboardActivity.this, ProfileActivity.class));
+                    startActivity(new Intent(DashboardActivity.this, UserProfileActivity.class));
                 } else if (itemId == R.id.menu_settings) {
                     startActivity(new Intent(DashboardActivity.this, SettingsActivity.class));
                 } else if (itemId == R.id.menu_register_trainer) {
@@ -117,7 +118,6 @@ public class DashboardActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Handle errors
                 tvGreeting.setText("Error loading data");
                 tvBmiValue.setText("N/A");
             }

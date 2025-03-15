@@ -14,12 +14,13 @@
         android:padding="16dp"
         android:layout_marginBottom="56dp">
 
-        <!-- Top Section with Greeting and Settings Icon -->
+        <!-- Top Section with Greeting and Profile Picture -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="20dp"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/tvGreeting"
@@ -33,11 +34,15 @@
 
             <ImageView
                 android:id="@+id/ivSettings"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:contentDescription="Settings"
-                android:src="@android:drawable/ic_menu_manage"
-                app:tint="@android:color/black"/>
+                android:scaleType="centerInside"
+                android:background="@drawable/circle_shape"
+                android:src="@drawable/ic_settings" />
+
         </LinearLayout>
 
         <!-- BMI Section -->

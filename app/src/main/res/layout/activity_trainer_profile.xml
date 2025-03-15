@@ -32,20 +32,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-
         android:text="Trainer Name"
         android:textSize="30sp"
         android:textStyle="bold"
         android:textColor="#000000"
+
         android:layout_marginBottom="10dp"/>
 
     <!-- Specialities -->
     <TextView
-        android:id="@+id/tvSpecialities"
+        android:id="@+id/tvTrainerProficiency"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:text="Specialities: Weight Training, Cardio"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/tvTrainerContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Contact Num"
         android:textSize="18sp"/>
 
     <!-- Selected Date -->
@@ -58,25 +66,22 @@
         android:textSize="18sp"
         android:textStyle="bold"/>
 
-    <!-- Description -->
-    <TextView
-        android:id="@+id/tvDescription"
+    <!-- Available Time Slots Spinner -->
+    <Spinner
+        android:id="@+id/spinnerAvailableTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Description: Experienced fitness trainer with 5 years..."
-        android:textSize="16sp"
-        android:textColor="#000000"/>
-
-    <!-- Available Time Slots -->
-    <ListView
-        android:id="@+id/listAvailableTime"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp"
         android:layout_margin="16dp"/>
+
+    <!-- Billing Section -->
+    <TextView
+        android:id="@+id/tvBilling"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Billing: 300 PHP per session"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
 
     <!-- Buttons Container -->
     <LinearLayout
@@ -106,5 +111,4 @@
             android:text="Set Date"
             android:textColor="@android:color/white"/>
     </LinearLayout>
-
 </LinearLayout>

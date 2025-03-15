@@ -32,4 +32,14 @@
     <item name="tvDateConfirm" type="id" />
     <item name="tvTrainerNameConfirm" type="id" />
     <item name="etLogin" type="id" />
+    <item name="etProficiency" type="id" />
+    <item name="btnDiscardChanges" type="id" />
+    <item name="btnSaveChanges" type="id" />
+    <item name="btnSave" type="id" />
+    <item name="trainerStrength" type="id" />
+    <item name="trainerCardio" type="id" />
+    <item name="trainerFlexibility" type="id" />
+    <item name="trainerHIIT" type="id" />
+    <item name="tvTrainerProficiency" type="id" />
+    <item name="tvTrainerContact" type="id" />
 </resources>

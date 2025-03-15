@@ -76,6 +76,9 @@
         <activity android:name=".SettingsActivity"
             android:exported="true"
             android:theme="@style/Theme.Scratch.NoActionBar"/>
+        <activity android:name=".UserProfileActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Scratch.NoActionBar"/>
 
 
     </application>

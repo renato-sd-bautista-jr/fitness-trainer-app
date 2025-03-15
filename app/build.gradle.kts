@@ -33,4 +33,13 @@ dependencies {
     implementation(libs.androidx.coordinatorlayout)
     implementation(libs.material)
     implementation("androidx.cardview:cardview:1.0.0")
+    implementation(libs.firebase.storage)
+// Glide for image loading
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
+
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
+
+
 }
