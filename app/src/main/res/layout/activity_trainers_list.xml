@@ -13,9 +13,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:background="#9D84DD"
-        android:paddingHorizontal="16dp"
-        android:textColor="@android:color/black"
+        android:background="#880500"
+        android:textColor="@android:color/white"
+    android:paddingHorizontal="16dp"
         android:spinnerMode="dropdown"/>
 
     <ScrollView
@@ -37,9 +37,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="#9D84DD"
         app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@color/black"
-        app:itemTextColor="@color/black"/>
+        android:background="#880500"
+        app:itemIconTint="@android:color/white"
+        app:itemTextColor="@android:color/white"/>
 
 </LinearLayout>

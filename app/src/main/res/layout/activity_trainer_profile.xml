@@ -96,9 +96,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:backgroundTint="#6C47FF"
+            android:backgroundTint="#880500"
             android:text="Book Now"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white"
+            />
 
         <!-- Set Date Button -->
         <Button
@@ -107,7 +108,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="10dp"
-            android:backgroundTint="#6C47FF"
+            android:backgroundTint="#880500"
             android:text="Set Date"
             android:textColor="@android:color/white"/>
     </LinearLayout>

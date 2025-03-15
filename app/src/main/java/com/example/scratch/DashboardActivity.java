@@ -2,124 +2,75 @@ package com.example.scratch;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.PopupMenu;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DashboardActivity extends AppCompatActivity {
 
-    private TextView tvGreeting, tvBmiValue;
-    private FirebaseAuth mAuth;
-    private DatabaseReference userRef;
-    private ImageView ivSettings;
+    private RecyclerView dailyPlannerRecyclerView;
+    private DailyPlannerAdapter dailyPlannerAdapter;
+    private List<String> dailyPlannerItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
-        String userId = mAuth.getCurrentUser().getUid(); // Get logged-in user ID
-
-        userRef = FirebaseDatabase.getInstance().getReference("Users").child(userId);
-
-        // Initialize UI elements
-        tvGreeting = findViewById(R.id.tvGreeting);
-        tvBmiValue = findViewById(R.id.tvBmiValue);
-        ivSettings = findViewById(R.id.ivSettings);
-
-        // Fetch and display user data
-        loadUserData();
-
-        // Initialize Bottom Navigation View
+        // Bottom Navigation
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int itemId = item.getItemId();
-
-                if (itemId == R.id.nav_dashboard) {
-                    return true;
-                } else if (itemId == R.id.nav_schedule) {
-                    startActivity(new Intent(DashboardActivity.this, ScheduleActivity.class));
-                    return true;
-                } else if (itemId == R.id.nav_workouts) {
-                    startActivity(new Intent(DashboardActivity.this, TrainerListActivity.class));
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        // Set default selected item (Dashboard)
-        bottomNavigationView.setSelectedItemId(R.id.nav_dashboard);
-
-        // Handle settings click
-        ivSettings.setOnClickListener(v -> {
-            PopupMenu popupMenu = new PopupMenu(DashboardActivity.this, v);
-            popupMenu.getMenuInflater().inflate(R.menu.menu_settings, popupMenu.getMenu());
-            popupMenu.setOnMenuItemClickListener(item -> {
-                int itemId = item.getItemId();
-                if (itemId == R.id.menu_profile) {
-                    startActivity(new Intent(DashboardActivity.this, UserProfileActivity.class));
-                } else if (itemId == R.id.menu_settings) {
-                    startActivity(new Intent(DashboardActivity.this, SettingsActivity.class));
-                } else if (itemId == R.id.menu_register_trainer) {
-                    startActivity(new Intent(DashboardActivity.this, RegisterTrainerActivity.class));
-                } else if (itemId == R.id.menu_logout) {
-                    FirebaseAuth.getInstance().signOut();
-                    startActivity(new Intent(this, LoginActivity.class));
-                    finish();  // Close the current activity
-                }
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_dashboard) {
                 return true;
-            });
-            popupMenu.show();
-        });
-    }
-
-    private void loadUserData() {
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.d("UserData", "Snapshot: " + snapshot.getValue());
-
-                if (snapshot.exists()) {
-                    String firstName = snapshot.child("firstName").getValue(String.class);
-                    if (firstName != null) {
-                        tvGreeting.setText("Hello, " + firstName);
-                    } else {
-                        tvGreeting.setText("Hello, User");
-                    }
-
-                    Double bmi = snapshot.child("bmi").getValue(Double.class);
-                    if (bmi != null) {
-                        tvBmiValue.setText(String.format("%.2f", bmi));
-                    } else {
-                        tvBmiValue.setText("N/A");
-                    }
-                } else {
-                    tvGreeting.setText("Hello, User");
-                    tvBmiValue.setText("N/A");
-                }
+            } else if (itemId == R.id.nav_schedule) {
+                startActivity(new Intent(this, ScheduleActivity.class));
+                return true;
+            } else if (itemId == R.id.nav_workouts) {
+                startActivity(new Intent(this, TrainerListActivity.class));
+                return true;
             }
+            return false;
+        });
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                tvGreeting.setText("Error loading data");
-                tvBmiValue.setText("N/A");
+        ViewPager2 viewPager = findViewById(R.id.viewPager);
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+
+        ProgressPagerAdapter pagerAdapter = new ProgressPagerAdapter(this);
+        viewPager.setAdapter(pagerAdapter);
+
+        String[] tabTitles = {"Weight", "Heart Rate", "Calories", "Workout Duration", "Sleep", "Review"};
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> tab.setText(tabTitles[position])).attach();
+
+        // Daily Planner Section
+        dailyPlannerRecyclerView = findViewById(R.id.dailyPlannerRecyclerView);
+        dailyPlannerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        dailyPlannerItems = new ArrayList<>();
+        dailyPlannerAdapter = new DailyPlannerAdapter(dailyPlannerItems);
+        dailyPlannerRecyclerView.setAdapter(dailyPlannerAdapter);
+
+        // Add new task button
+        Button addTaskButton = findViewById(R.id.btnAddTask);
+        EditText taskInput = findViewById(R.id.etTaskInput);
+        addTaskButton.setOnClickListener(v -> {
+            String newTask = taskInput.getText().toString().trim();
+            if (!newTask.isEmpty()) {
+                dailyPlannerItems.add(newTask);
+                dailyPlannerAdapter.notifyItemInserted(dailyPlannerItems.size() - 1);
+                taskInput.setText("");
+            } else {
+                Toast.makeText(this, "Please enter a task", Toast.LENGTH_SHORT).show();
             }
         });
     }

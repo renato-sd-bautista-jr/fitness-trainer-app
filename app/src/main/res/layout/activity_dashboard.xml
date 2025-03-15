@@ -45,7 +45,20 @@
 
         </LinearLayout>
 
-        <!-- BMI Section -->
+        <!-- Progress Tracker Section -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="20dp"/>
+
+        <!-- Daily Planner Section -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,31 +66,73 @@
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp"
             android:padding="16dp"
-            android:backgroundTint="@android:color/holo_blue_light">
+            android:backgroundTint="@android:color/holo_green_light">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="center">
+                android:gravity="center_horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="BMI"
+                    android:text="Daily Planner"
                     android:textSize="18sp"
                     android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="8dp"/>
+
+                <EditText
+                    android:id="@+id/etTaskInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter new task"
+                    android:background="@android:color/white"
+                    android:padding="8dp"
                     android:textColor="@android:color/black"/>
 
-                <TextView
-                    android:id="@+id/tvBmiValue"
+                <Button
+                    android:id="@+id/btnAddTask"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Placeholder"
-                    android:textSize="24sp"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold"/>
+                    android:text="Add Task"
+                    android:layout_marginTop="8dp"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/dailyPlannerRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@android:color/white"/>
             </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Weekly/Monthly Review Section -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            android:padding="16dp"
+            android:backgroundTint="@android:color/holo_orange_light">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Weekly/Monthly Review"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:layout_marginBottom="8dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/reviewRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:background="@android:color/white"/>
 
         </androidx.cardview.widget.CardView>
 
@@ -97,9 +152,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="#9D84DD"
+
         app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@color/black"
-        app:itemTextColor="@color/black"/>
+        android:background="#880500"
+        app:itemIconTint="@android:color/white"
+        app:itemTextColor="@android:color/white"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
