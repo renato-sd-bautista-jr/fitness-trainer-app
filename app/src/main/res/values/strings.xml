@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">scratch</string>
     <string name="default_web_client_id">YOUR_CLIENT_ID.apps.googleusercontent.com</string>
+
+    <string-array name="proficiency_options">
+        <item>Strength Training</item>
+        <item>Cardio</item>
+        <item>Flexibility</item>
+        <item>HIIT</item>
+    </string-array>
 </resources>

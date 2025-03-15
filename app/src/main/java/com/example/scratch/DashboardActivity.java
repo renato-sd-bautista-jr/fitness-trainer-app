@@ -32,8 +32,8 @@ public class DashboardActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         String userId = mAuth.getCurrentUser().getUid(); // Get logged-in user ID
 
-        // Reference directly to the user's data (no "Users" node)
-        userRef = FirebaseDatabase.getInstance().getReference().child(userId);
+
+        userRef = FirebaseDatabase.getInstance().getReference("Users").child(userId);
 
         // Initialize UI elements
         tvGreeting = findViewById(R.id.tvGreeting);
