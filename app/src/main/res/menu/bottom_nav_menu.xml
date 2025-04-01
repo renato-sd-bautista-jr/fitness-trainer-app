@@ -11,12 +11,12 @@
     <item
         android:id="@+id/nav_schedule"
         android:icon="@drawable/schedule"
-        android:title="Schedule"/>
+        android:title="Calendar"/>
 
     <item
         android:id="@+id/nav_workouts"
         android:icon="@drawable/dumbell"
-        android:title="Workouts"/>
+        android:title="Class"/>
 
 
 </menu>

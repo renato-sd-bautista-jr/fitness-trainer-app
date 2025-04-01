@@ -97,7 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="#880500"
-            android:text="Book Now"
+            android:text="Join Class"
             android:textColor="@android:color/white"
             />
 

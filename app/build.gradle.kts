@@ -25,6 +25,8 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-database")
+    implementation(libs.firebase.storage)
+    implementation(libs.firebase.firestore)
 
     // Google Sign-In
     implementation("com.google.android.gms:play-services-auth:20.7.0")
@@ -33,13 +35,13 @@ dependencies {
     implementation(libs.androidx.coordinatorlayout)
     implementation(libs.material)
     implementation("androidx.cardview:cardview:1.0.0")
-    implementation(libs.firebase.storage)
-// Glide for image loading
+    implementation("androidx.core:core-ktx:1.12.0")
+    // Glide for image loading
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("androidx.work:work-runtime:2.9.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 
-
-    implementation ("de.hdodenhof:circleimageview:3.1.0")
-
-
+    // CircleImageView for profile images
+    implementation("de.hdodenhof:circleimageview:3.1.0")
 }
+

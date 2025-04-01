@@ -42,4 +42,13 @@
     <item name="trainerHIIT" type="id" />
     <item name="tvTrainerProficiency" type="id" />
     <item name="tvTrainerContact" type="id" />
+    <item name="fabAddTask" type="id" />
+    <item name="cbReview" type="id" />
+    <item name="etReview" type="id" />
+    <item name="btnSaveTask" type="id" />
+    <item name="etTaskInput" type="id" />
+    <item name="dailyPlannerRecyclerView" type="id" />
+    <item name="btnSetGoal" type="id" />
+    <item name="btnCreateGoal" type="id" />
+    <item name="etStatValue" type="id" />
 </resources>

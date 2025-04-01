@@ -1,161 +1,125 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    android:padding="0dp">
 
-    <!-- Main Content -->
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:layout_marginBottom="56dp">
+        android:padding="16dp">
+    <!-- Main Content Container -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomNavigationView">
 
-        <!-- Top Section with Greeting and Profile Picture -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="20dp"
-            android:gravity="center_vertical">
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
 
+            <!-- Greeting -->
             <TextView
                 android:id="@+id/tvGreeting"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Hello, [First Name]"
-                android:textSize="20sp"
+                android:text="Hello, User!"
+                android:textSize="24sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"/>
 
-            <ImageView
-                android:id="@+id/ivSettings"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:contentDescription="Settings"
-                android:scaleType="centerInside"
-                android:background="@drawable/circle_shape"
-                android:src="@drawable/ic_settings" />
+            <!-- Create Goal Button -->
+            <Button
+                android:id="@+id/btnCreateGoal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:text="Create Goal"
+                android:layout_marginTop="16dp"/>
 
-        </LinearLayout>
-
-        <!-- Progress Tracker Section -->
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginBottom="20dp"/>
-
-        <!-- Daily Planner Section -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            android:padding="16dp"
-            android:backgroundTint="@android:color/holo_green_light">
-
+            <!-- Current Stats Header with Toggle -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="Daily Planner"
-                    android:textSize="18sp"
+                    android:text="Current Stats"
+                    android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="@android:color/black"
-                    android:layout_marginBottom="8dp"/>
-
-                <EditText
-                    android:id="@+id/etTaskInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Enter new task"
-                    android:background="@android:color/white"
-                    android:padding="8dp"
                     android:textColor="@android:color/black"/>
 
-                <Button
-                    android:id="@+id/btnAddTask"
+                <ImageButton
+                    android:id="@+id/btnToggleStats"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Add Task"
-                    android:layout_marginTop="8dp"/>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/dailyPlannerRecyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@android:color/white"/>
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_more"
+                    android:contentDescription="Toggle Stats"/>
             </LinearLayout>
 
-        </androidx.cardview.widget.CardView>
-
-        <!-- Weekly/Monthly Review Section -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            android:padding="16dp"
-            android:backgroundTint="@android:color/holo_orange_light">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Weekly/Monthly Review"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"
-                android:layout_marginBottom="8dp"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/reviewRecyclerView"
+            <LinearLayout
+                android:id="@+id/cardContainer"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:background="@android:color/white"/>
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="8dp"/>
 
-        </androidx.cardview.widget.CardView>
+            <!-- Goals Header with Toggle -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical">
 
-        <!-- Additional Features Placeholder -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Other Features Coming Soon..."
-            android:textSize="16sp"
-            android:textColor="@android:color/darker_gray"
-            android:gravity="center"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Goals"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"/>
+
+                <ImageButton
+                    android:id="@+id/btnToggleGoals"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_more"
+                    android:contentDescription="Toggle Goals"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/goalContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="8dp"/>
+        </LinearLayout>
+    </ScrollView>
+
     </LinearLayout>
-
-    <!-- Bottom Navigation -->
+    <!-- Bottom Navigation Bar -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-
-        app:menu="@menu/bottom_nav_menu"
+        android:layout_alignParentBottom="true"
         android:background="#880500"
+        app:menu="@menu/bottom_nav_menu"
         app:itemIconTint="@android:color/white"
         app:itemTextColor="@android:color/white"/>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>

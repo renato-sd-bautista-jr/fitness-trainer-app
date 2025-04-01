@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@android:color/white"
+        android:elevation="4dp"
+        android:layout_margin="8dp">
+
+        <!-- Weight -->
+        <CheckBox
+            android:id="@+id/cbWeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Track Weight (Recommended: 70kg)"/>
+        <EditText
+            android:id="@+id/etWeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Weight (kg)"
+            android:inputType="numberDecimal"/>
+
+        <!-- Heart Rate -->
+        <CheckBox
+            android:id="@+id/cbHeartRate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Track Heart Rate (Recommended: 60-100 bpm)"/>
+        <EditText
+            android:id="@+id/etHeartRate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Heart Rate (bpm)"
+            android:inputType="number"/>
+
+        <!-- Calories -->
+        <CheckBox
+            android:id="@+id/cbCalories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Track Calories (Recommended: 2000 kcal)"/>
+        <EditText
+            android:id="@+id/etCalories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Calories (kcal)"
+            android:inputType="number"/>
+
+        <!-- Workout Duration -->
+        <CheckBox
+            android:id="@+id/cbWorkoutDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Track Workout Duration (Recommended: 30 mins)"/>
+        <EditText
+            android:id="@+id/etWorkoutDuration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Workout Duration (mins)"
+            android:inputType="number"/>
+
+        <!-- Sleep -->
+        <CheckBox
+            android:id="@+id/cbSleep"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Track Sleep (Recommended: 7-9 hrs)"/>
+        <EditText
+            android:id="@+id/etSleep"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Sleep (hrs)"
+            android:inputType="numberDecimal"/>
+
+        <!-- Review -->
+        <CheckBox
+            android:id="@+id/cbReview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Track Review (Recommended: Daily Notes)"/>
+        <EditText
+            android:id="@+id/etReview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Review Notes"
+            android:inputType="text"/>
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/btnSaveTask"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save Tasks"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"/>
+
+    </LinearLayout>
+</ScrollView>
