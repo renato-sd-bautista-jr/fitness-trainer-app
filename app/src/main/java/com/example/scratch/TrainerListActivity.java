@@ -101,7 +101,7 @@ public class TrainerListActivity extends AppCompatActivity {
 
                         trainerItem.setOnClickListener(v -> {
                             Intent intent = new Intent(TrainerListActivity.this, TrainerProfileActivity.class);
-                            intent.putExtra("UserId", userId);  // Pass the UserId
+                            intent.putExtra("trainerId", userId);  // Change "UserId" to "trainerId"
                             intent.putExtra("TrainerName", fullName);
                             intent.putExtra("Proficiency", proficiency);
                             intent.putExtra("ContactInfo", contactInfo);

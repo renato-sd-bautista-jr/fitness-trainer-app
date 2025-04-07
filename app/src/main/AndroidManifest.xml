@@ -68,9 +68,6 @@
         <activity android:name=".ConfirmationActivity"
             android:exported="true"
             android:theme="@style/Theme.Scratch.NoActionBar"/>
-        <activity android:name=".ProfileActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Scratch.NoActionBar"/>
         <activity android:name=".RegisterTrainerActivity"
             android:exported="true"
             android:theme="@style/Theme.Scratch.NoActionBar"/>

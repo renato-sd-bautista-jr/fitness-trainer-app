@@ -20,7 +20,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private EditText etFirstName, etLastName, etEmail, etHeight, etWeight, etBmi;
     private DatabaseReference userRef;
     private FirebaseAuth mAuth;
-    private boolean isEditing = false;
+    private boolean isEditing = true;
     private String initialFirstName, initialLastName, initialEmail;
 
     @Override

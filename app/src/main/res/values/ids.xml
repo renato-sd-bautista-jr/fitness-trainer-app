@@ -51,4 +51,5 @@
     <item name="btnSetGoal" type="id" />
     <item name="btnCreateGoal" type="id" />
     <item name="etStatValue" type="id" />
+    <item name="listViewAvailableDates" type="id" />
 </resources>

@@ -1,13 +1,13 @@
 package com.example.scratch;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CalendarView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -30,9 +31,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
+
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
-import java.util.concurrent.TimeUnit;
 
 public class ScheduleActivity extends AppCompatActivity {
 
@@ -43,47 +46,42 @@ public class ScheduleActivity extends AppCompatActivity {
     private DatabaseReference appointmentsRef;
     private FirebaseAuth mAuth;
     private String userId;
-    private String selectedDate;
+    private Calendar selectedCalendar;
+    private String filterStartDate = null;
+    private String filterTimeSlot = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule);
 
-        CalendarView calendarView = findViewById(R.id.calendarView);
         tvSelectedDate = findViewById(R.id.tvSelectedDate);
         listViewSchedule = findViewById(R.id.listViewSchedule);
+        Button btnPickDateRange = findViewById(R.id.btnPickDateRange);
+        Button btnClearFilter = findViewById(R.id.btnClearFilter);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        // Inside onCreate()
+
         NotificationHelper.createNotificationChannel(this);
 
         PeriodicWorkRequest scheduleCheckRequest =
                 new PeriodicWorkRequest.Builder(ScheduleWorker.class, 15, TimeUnit.MINUTES)
                         .build();
-
         WorkManager.getInstance(this).enqueue(scheduleCheckRequest);
-        // Initialize Firebase
+
         mAuth = FirebaseAuth.getInstance();
         userId = mAuth.getCurrentUser().getUid();
         appointmentsRef = FirebaseDatabase.getInstance().getReference("Appointments");
 
-        // Set up ListView
         eventList = new ArrayList<>();
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, eventList);
         listViewSchedule.setAdapter(adapter);
 
-        // Load Appointments for today by default
-        selectedDate = new SimpleDateFormat("yyyy-M-d", Locale.getDefault()).format(new Date());
-        tvSelectedDate.setText("Selected Date: " + selectedDate);
-        loadAppointments();
+        // ✅ Optional fix: store and reuse selected date
+        selectedCalendar = Calendar.getInstance(); // Start with the current date
+        updateSelectedDateText(); // Update the displayed selected date
+        loadAppointments(selectedCalendar,3); // ✅ Load appointments starting from today
 
-        // Handle calendar date selection
-        calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
-            selectedDate = year + "-" + (month + 1) + "-" + dayOfMonth;
-            tvSelectedDate.setText("Selected Date: " + selectedDate);
-        });
-
-        // Bottom Navigation setup
+        // Bottom nav
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_dashboard) {
@@ -97,18 +95,51 @@ public class ScheduleActivity extends AppCompatActivity {
             }
             return false;
         });
-
-        // Set default selected item (Schedule)
         bottomNavigationView.setSelectedItemId(R.id.nav_schedule);
 
-        // Handle appointment clicks
         listViewSchedule.setOnItemClickListener((parent, view, position, id) -> {
             String selectedItem = eventList.get(position);
-
             if (!selectedItem.startsWith("📅") && !selectedItem.equals("No appointments found.")) {
                 showAppointmentOptions(selectedItem);
             }
         });
+
+        // 🗓 Pick Date Range (Proximity)
+        btnPickDateRange.setOnClickListener(v -> {
+            // Create a dialog to pick the number of weeks (1, 2, 3, etc.)
+            String[] weekOptions = {"1 Week", "2 Weeks", "3 Weeks"};
+            new AlertDialog.Builder(ScheduleActivity.this)
+                    .setTitle("Select Time Range")
+                    .setItems(weekOptions, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            int weeksAhead = which + 1; // Convert position to weeks (1, 2, 3)
+                            selectedCalendar = Calendar.getInstance(); // Start with the current date
+                            filterStartDate = weeksAhead + " Week(s)";
+                            updateSelectedDateText(); // Update the displayed selected date
+                            loadAppointments(selectedCalendar, weeksAhead); // Load appointments for the selected range
+                        }
+                    })
+                    .show();
+        });
+
+        btnClearFilter.setOnClickListener(v -> {
+            filterStartDate = null;
+            filterTimeSlot = null;
+            selectedCalendar = Calendar.getInstance(); // Reset to today
+            updateSelectedDateText(); // Update the displayed selected date
+            loadAppointments(selectedCalendar, 3); // Load appointments for the default 1-week range
+        });
+    }
+
+    private void updateSelectedDateText() {
+        String text = "Selected Range: ";
+        if (filterStartDate != null) {
+            text += filterStartDate;
+        } else {
+            text += "All upcoming appointments";
+        }
+        tvSelectedDate.setText(text);
     }
 
     private void showAppointmentOptions(String appointmentDetails) {
@@ -141,6 +172,7 @@ public class ScheduleActivity extends AppCompatActivity {
                                 appointment.getRef().removeValue().addOnCompleteListener(task -> {
                                     if (task.isSuccessful()) {
                                         Toast.makeText(ScheduleActivity.this, "Appointment cancelled", Toast.LENGTH_SHORT).show();
+                                        loadAppointments(selectedCalendar, 1); // Load appointments for the 1-week range
                                     } else {
                                         Toast.makeText(ScheduleActivity.this, "Failed to cancel appointment", Toast.LENGTH_SHORT).show();
                                     }
@@ -158,11 +190,13 @@ public class ScheduleActivity extends AppCompatActivity {
     }
 
     private void showRescheduleDialog(String appointmentDetails) {
-        // Implement date and time picker dialog here to select new date and time
         Toast.makeText(this, "Reschedule feature not implemented yet", Toast.LENGTH_SHORT).show();
     }
 
-    private void loadAppointments() {
+    private void loadAppointments(Calendar selectedDate, int weeksAhead) {
+        Calendar endDate = (Calendar) selectedDate.clone();
+        endDate.add(Calendar.DAY_OF_YEAR, weeksAhead * 7); // Get the next weeksAhead weeks
+
         appointmentsRef.orderByChild("userId").equalTo(userId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -170,28 +204,39 @@ public class ScheduleActivity extends AppCompatActivity {
                         Map<String, ArrayList<String>> scheduleMap = new HashMap<>();
                         eventList.clear();
 
-                        Calendar currentTime = Calendar.getInstance();
+                        SimpleDateFormat sdfInput = new SimpleDateFormat("yyyy-M-d", Locale.getDefault()); // Date format from Firebase
+                        SimpleDateFormat sdfOutput = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()); // Output format (e.g., April 4, 2025)
 
                         for (DataSnapshot appointment : snapshot.getChildren()) {
-                            String date = appointment.child("date").getValue(String.class);
+                            String dateStr = appointment.child("date").getValue(String.class);
                             String timeSlot = appointment.child("timeSlot").getValue(String.class);
 
-                            if (date != null && timeSlot != null) {
-                                scheduleMap.putIfAbsent(date, new ArrayList<>());
-                                scheduleMap.get(date).add("• " + timeSlot);
+                            if (dateStr != null && timeSlot != null) {
+                                try {
+                                    // Parse the date from Firebase (keep in yyyy-M-d format for comparison)
+                                    Date appointmentDate = sdfInput.parse(dateStr);
+                                    if (appointmentDate != null &&
+                                            !appointmentDate.before(selectedDate.getTime()) &&
+                                            !appointmentDate.after(endDate.getTime())) {
 
-                                // Check for today's appointments
-                                String today = new SimpleDateFormat("yyyy-M-d", Locale.getDefault()).format(new Date());
-                                if (today.equals(date)) {
-                                    sendNotificationIfUpcoming(timeSlot);
+                                        // Format the date for display
+                                        String formattedDate = sdfOutput.format(appointmentDate);
+
+                                        // Add the time slot under the formatted date
+                                        scheduleMap.putIfAbsent(formattedDate, new ArrayList<>());
+                                        scheduleMap.get(formattedDate).add("• " + timeSlot);
+                                    }
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
                                 }
                             }
                         }
 
                         if (scheduleMap.isEmpty()) {
-                            eventList.add("No appointments found.");
+                            eventList.add("No appointments found for selected range.");
                         } else {
-                            for (Map.Entry<String, ArrayList<String>> entry : scheduleMap.entrySet()) {
+                            TreeMap<String, ArrayList<String>> sortedMap = new TreeMap<>(scheduleMap);
+                            for (Map.Entry<String, ArrayList<String>> entry : sortedMap.entrySet()) {
                                 eventList.add("📅 " + entry.getKey());
                                 eventList.addAll(entry.getValue());
                             }
@@ -205,23 +250,6 @@ public class ScheduleActivity extends AppCompatActivity {
                         Toast.makeText(ScheduleActivity.this, "Failed to load appointments", Toast.LENGTH_SHORT).show();
                     }
                 });
-    }
 
-    // Check if appointment is within the next hour
-    private void sendNotificationIfUpcoming(String timeSlot) {
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        try {
-            Date appointmentTime = timeFormat.parse(timeSlot);
-            Calendar appointmentCal = Calendar.getInstance();
-            appointmentCal.setTime(appointmentTime);
-
-            Calendar now = Calendar.getInstance();
-            if (appointmentCal.get(Calendar.HOUR_OF_DAY) == now.get(Calendar.HOUR_OF_DAY) + 1) {
-                NotificationHelper.sendNotification(this, "Upcoming Appointment", "You have an appointment at " + timeSlot + ". Get ready!");
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

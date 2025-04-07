@@ -9,7 +9,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="24dp">
+        android:padding="24dp"
+        android:layout_above="@id/bottomNavigationView">
 
         <!-- Header -->
         <TextView
@@ -22,19 +23,46 @@
             android:layout_marginBottom="20dp"
             android:textColor="#000000"/>
 
-        <!-- Calendar View -->
-        <CalendarView
-            android:id="@+id/calendarView"
+        <!-- Filter Section for Date & Time -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"/>
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="14dp"
+            android:weightSum="3"
+            android:padding="8dp">
+
+            <!-- Date Picker Button -->
+            <Button
+                android:id="@+id/btnPickDateRange"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Pick Start Date"
+                android:textColor="#FFFFFF"
+                android:background="#880500"/>
+
+            <!-- Time Picker Button -->
+
+            <!-- Clear Filter Button -->
+            <Button
+                android:id="@+id/btnClearFilter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="Clear"
+                android:textColor="#FFFFFF"
+                android:background="#555555"/>
+        </LinearLayout>
 
         <!-- Selected Date Text -->
         <TextView
             android:id="@+id/tvSelectedDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Selected Date:"
+            android:text="Showing appointment:"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="#000000"
@@ -59,6 +87,5 @@
         android:background="#880500"
         app:itemIconTint="@android:color/white"
         app:itemTextColor="@android:color/white"
-
         app:menu="@menu/bottom_nav_menu"/>
 </RelativeLayout>
