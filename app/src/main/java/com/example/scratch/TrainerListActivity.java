@@ -83,30 +83,88 @@ public class TrainerListActivity extends AppCompatActivity {
 
     private void loadTrainers(String workoutType) {
         DatabaseReference trainersRef = FirebaseDatabase.getInstance().getReference("Trainers");
+        DatabaseReference appointmentsRef = FirebaseDatabase.getInstance().getReference("Appointments");
+
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         trainersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(DataSnapshot trainersSnapshot) {
                 trainerListContainer.removeAllViews();
 
-                for (DataSnapshot trainerSnapshot : dataSnapshot.getChildren()) {
+                for (DataSnapshot trainerSnapshot : trainersSnapshot.getChildren()) {
+                    String userId = trainerSnapshot.getKey();
+                    if (userId != null && userId.equals(currentUserId)) continue;
+
                     String fullName = trainerSnapshot.child("fullName").getValue(String.class);
                     String proficiency = trainerSnapshot.child("proficiency").getValue(String.class);
                     String contactInfo = trainerSnapshot.child("contactInfo").getValue(String.class);
-                    String userId = trainerSnapshot.getKey();  // Get the UserId (trainer's unique ID)
+
+                    Boolean isAvailable = trainerSnapshot.child("isAvailable").getValue(Boolean.class);
+                    if (isAvailable == null) isAvailable = true;
 
                     if (workoutType.equals("All") || workoutType.equals(proficiency)) {
+
                         View trainerItem = getLayoutInflater().inflate(R.layout.trainer_item, trainerListContainer, false);
                         TextView tvTrainerName = trainerItem.findViewById(R.id.tvTrainerName);
+                        TextView tvTrainerProficiency = trainerItem.findViewById(R.id.tvTrainerProficiency);
+                        TextView tvTrainerAvailability = trainerItem.findViewById(R.id.tvTrainerAvailability);
+                        TextView tvTrainerRating = trainerItem.findViewById(R.id.tvTrainerRating); // Make sure this exists in your layout
+
                         tvTrainerName.setText(fullName);
+                        tvTrainerProficiency.setText("Specialties: " + proficiency);
+
+                        if (isAvailable) {
+                            tvTrainerAvailability.setText("Available");
+                            tvTrainerAvailability.setTextColor(getResources().getColor(R.color.green));
+                        } else {
+                            tvTrainerAvailability.setText("Unavailable");
+                            tvTrainerAvailability.setTextColor(getResources().getColor(R.color.red));
+                        }
+
+                        // Load ratings from Appointments node
+                        appointmentsRef.orderByChild("trainerId").equalTo(userId)
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        float totalRating = 0;
+                                        int count = 0;
+                                        for (DataSnapshot appointment : snapshot.getChildren()) {
+                                            String status = appointment.child("status").getValue(String.class);
+                                            String ratingStr = appointment.child("ratings").getValue(String.class);
+
+                                            if ("Completed".equalsIgnoreCase(status) && ratingStr != null) {
+                                                try {
+                                                    float rating = Float.parseFloat(ratingStr);
+                                                    totalRating += rating;
+                                                    count++;
+                                                } catch (NumberFormatException ignored) {}
+                                            }
+                                        }
+
+                                        if (count > 0) {
+                                            float avgRating = totalRating / count;
+                                            tvTrainerRating.setText(String.format("Rating: %.1f ★", avgRating));
+                                        } else {
+                                            tvTrainerRating.setText("No ratings yet");
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        tvTrainerRating.setText("Rating unavailable");
+                                    }
+                                });
 
                         trainerItem.setOnClickListener(v -> {
                             Intent intent = new Intent(TrainerListActivity.this, TrainerProfileActivity.class);
-                            intent.putExtra("trainerId", userId);  // Change "UserId" to "trainerId"
+                            intent.putExtra("trainerId", userId);
                             intent.putExtra("TrainerName", fullName);
                             intent.putExtra("Proficiency", proficiency);
                             intent.putExtra("ContactInfo", contactInfo);
                             startActivity(intent);
                         });
+
                         trainerListContainer.addView(trainerItem);
                     }
                 }
@@ -116,6 +174,8 @@ public class TrainerListActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {}
         });
     }
+
+
 
 
 }

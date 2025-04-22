@@ -36,25 +36,12 @@
             android:exported="true"
             android:theme="@style/Theme.Scratch.NoActionBar"/>
 
-        <!-- HomeDashboardActivity -->
-        <activity android:name=".HomeDashboardActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Scratch.NoActionBar"/>
 
         <!-- Activity Schedule -->
         <activity android:name=".ScheduleActivity"
             android:exported="true"
             android:theme="@style/Theme.Scratch.NoActionBar"/>
 
-        <!-- Activity Workouts -->
-        <activity android:name=".WorkoutActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Scratch.NoActionBar"/>
-
-        <!-- Activity Trainers -->
-        <activity android:name=".TrainerActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Scratch.NoActionBar"/>
 
 
         <activity android:name=".TrainerListActivity"
@@ -80,6 +67,25 @@
         <activity android:name=".CreateGoalActivity"
             android:exported="true"
             android:theme="@style/Theme.Scratch.NoActionBar"/>
+        <activity android:name=".BottomNavTrainerHelper"
+            android:exported="true"
+            android:theme="@style/Theme.Scratch.NoActionBar"/>
+        <activity android:name=".SimpleDateFormat"
+            android:exported="true"
+            android:theme="@style/Theme.Scratch.NoActionBar"/>
+        <activity android:name=".TrainerAppointmentsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Scratch.NoActionBar"/>
+        <activity android:name=".TrainerDashboardActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Scratch.NoActionBar"/>
+        <activity android:name=".TrainerProfileInfoActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Scratch.NoActionBar"/>
+        <activity android:name=".TrainerScheduleActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Scratch.NoActionBar"/>
+
 
 
 

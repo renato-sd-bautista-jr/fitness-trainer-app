@@ -21,8 +21,9 @@
     <item name="recyclerViewWorkouts" type="id" />
     <item name="etSearchTrainer" type="id" />
     <item name="recyclerViewTrainers" type="id" />
-    <item name="nav_trainer" type="id" />
-    <item name="nav_dashboard" type="id" />
+    <item name="nav_trainerprofile" type="id" />
+    <item name="nav_trainerdashboard" type="id" />
+    <item name="nav_trainerschedule" type="id" />
     <item name="listAvailableTime" type="id" />
     <item name="tvDescription" type="id" />
     <item name="tvSpecialities" type="id" />
@@ -52,4 +53,6 @@
     <item name="btnCreateGoal" type="id" />
     <item name="etStatValue" type="id" />
     <item name="listViewAvailableDates" type="id" />
+    <item name="textViewTime" type="id" />
+    <item name="textViewDate" type="id" />
 </resources>

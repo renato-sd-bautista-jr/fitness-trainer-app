@@ -1,0 +1,37 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/rounded_card"
+    android:padding="16dp"
+    android:layout_marginBottom="8dp"
+    android:elevation="3dp">
+
+    <TextView
+        android:id="@+id/tvClientName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Client: John Doe"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#000" />
+
+    <TextView
+        android:id="@+id/tvDateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date: April 15, 2025 - 3:00 PM"
+        android:textSize="14sp"
+        android:textColor="#444"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/tvWorkoutType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Workout: Strength Training"
+        android:textSize="14sp"
+        android:textColor="#666"
+        android:layout_marginTop="2dp" />
+
+</LinearLayout>

@@ -2,6 +2,7 @@ package com.example.scratch;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,10 +17,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.example.scratch.R;
+import com.google.firebase.database.ValueEventListener;
+
 public class DashboardActivity extends AppCompatActivity {
 
     private DatabaseReference db;
@@ -27,7 +32,7 @@ public class DashboardActivity extends AppCompatActivity {
     private LinearLayout cardContainer, goalContainer;
     private ImageButton btnToggleStats, btnToggleGoals;
     private boolean isStatsVisible = true, isGoalsVisible = true;
-
+    private String userId = "",firstName = "";;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,12 +41,28 @@ public class DashboardActivity extends AppCompatActivity {
 
         db = FirebaseDatabase.getInstance().getReference();
         auth = FirebaseAuth.getInstance();
-
-        String userId = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : "User";
-
+        // Retrieve the userId and firstName passed from LauncherActivity
+        userId = getIntent().getStringExtra("userId");
+        firstName = getIntent().getStringExtra("firstName");
         // Set greeting
+
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (getIntent().hasExtra("userId")) {
+            userId = getIntent().getStringExtra("userId");
+        } else if (currentUser != null) {
+            userId = currentUser.getUid(); // fallback to logged in user
+        } else {
+            Toast.makeText(this, "No logged-in user", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
+        if (getIntent().hasExtra("firstName")) {
+            firstName = getIntent().getStringExtra("firstName");
+        }
         TextView tvGreeting = findViewById(R.id.greetingTextView);
         //tvGreeting.setText("Hello, " + userId + "!");
+        Toast.makeText(DashboardActivity.this, "Welcome, " + firstName + "ID : "+ userId, Toast.LENGTH_SHORT).show();
 
         // Initialize Views
         cardContainer = findViewById(R.id.cardContainer);
@@ -86,14 +107,38 @@ public class DashboardActivity extends AppCompatActivity {
             popupMenu.getMenuInflater().inflate(R.menu.menu_settings, popupMenu.getMenu());
 
             popupMenu.setOnMenuItemClickListener(item -> {
-                Intent intent = null; // Declare intent variable here
+                Intent intent = null;
 
                 if (item.getItemId() == R.id.menu_profile) {
                     intent = new Intent(DashboardActivity.this, UserProfileActivity.class);
                 } else if (item.getItemId() == R.id.menu_settings) {
                     intent = new Intent(DashboardActivity.this, SettingsActivity.class);
                 } else if (item.getItemId() == R.id.menu_register_trainer) {
-                    intent = new Intent(DashboardActivity.this, RegisterTrainerActivity.class);
+                    if (currentUser != null) {
+                        String currentUserId = currentUser.getUid();
+                        DatabaseReference trainerRef = FirebaseDatabase.getInstance().getReference("Trainers").child(currentUserId);
+
+                        trainerRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                Intent intent;
+                                if (snapshot.exists()) {
+                                    // User is already a trainer
+                                    intent = new Intent(DashboardActivity.this, TrainerDashboardActivity.class);
+                                } else {
+                                    // User is not a trainer yet
+                                    intent = new Intent(DashboardActivity.this, RegisterTrainerActivity.class);
+                                }
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(DashboardActivity.this, "Failed to check trainer status.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                    return true;
                 } else if (item.getItemId() == R.id.menu_logout) {
                     FirebaseAuth.getInstance().signOut();
                     intent = new Intent(DashboardActivity.this, LoginActivity.class);
@@ -119,30 +164,7 @@ public class DashboardActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_settings, menu);
         return true;
     }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
 
-        if (id == R.id.menu_profile) {
-            startActivity(new Intent(this, UserProfileActivity.class));
-            return true;
-        } else if (id == R.id.menu_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        } else if (id == R.id.menu_register_trainer) {
-            startActivity(new Intent(this, RegisterTrainerActivity.class));
-            return true;
-        } else if (id == R.id.menu_logout) {
-            FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(this, LoginActivity.class); // Or your actual login activity
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
     private void setupBottomNavigation() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         if (bottomNavigationView != null) {

@@ -1,22 +1,15 @@
 package com.example.scratch;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -25,8 +18,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,508 +29,326 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.text.SimpleDateFormat;
+
 public class TrainerProfileActivity extends AppCompatActivity {
 
-    private TextView trainerName, trainerProficiency, trainerContact, selectedDate, trainerSchedule;
-    private Button btnBookNow, btnSetDate;
+    private TextView trainerName, trainerProficiency, trainerContact, selectedDate;
+    private Button btnBookNow;
     private ListView listViewAvailableDates;
     private Spinner spinnerAvailableTime;
-    private ArrayAdapter<String> datesAdapter;
-    private List<String> availableDates = new ArrayList<>();
-    private String trainerId;
-    private DatabaseReference trainersRef, appointmentsRef;
-    private List<String> formattedDates = new ArrayList<>();
+    private ArrayAdapter<String> timeAdapter;
+    private ArrayList<String> formattedDates = new ArrayList<>();
+    private Map<String, List<String>> dateToTimeSlotsMap = new HashMap<>();
+    private String selectedDateForBooking = null;
 
+    private DatabaseReference trainersRef, appointmentsRef;
+    private String trainerId;
+    private String selectedTimeSlot = "";
+    private String selectedDateString = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trainer_profile);
 
-        // Initialize views
+        // Init views
         trainerName = findViewById(R.id.tvTrainerName);
         trainerProficiency = findViewById(R.id.tvTrainerProficiency);
         trainerContact = findViewById(R.id.tvTrainerContact);
         selectedDate = findViewById(R.id.tvSelectedDate);
         btnBookNow = findViewById(R.id.btnBookNow);
-        btnSetDate = findViewById(R.id.btnSetDate);
         listViewAvailableDates = findViewById(R.id.listViewAvailableDates);
         spinnerAvailableTime = findViewById(R.id.spinnerAvailableTime);
-        trainerSchedule = findViewById(R.id.trainerSchedule);
+        TextView trainerRating = findViewById(R.id.tvTrainerRating);
 
-        appointmentsRef = FirebaseDatabase.getInstance().getReference("Appointments");
+        // Firebase
         trainersRef = FirebaseDatabase.getInstance().getReference("Trainers");
+        appointmentsRef = FirebaseDatabase.getInstance().getReference("Appointments");
 
-        Intent intent = getIntent();
-        trainerId = intent.getStringExtra("trainerId");
+        // Get intent extras
+        trainerId = getIntent().getStringExtra("trainerId");
+        String name = getIntent().getStringExtra("TrainerName");
+        String proficiency = getIntent().getStringExtra("Proficiency");
+        String contact = getIntent().getStringExtra("ContactInfo");
+        fetchAndDisplayTrainerRating(trainerRating);
+        // Set trainer info
+        trainerName.setText(name);
+        trainerProficiency.setText(proficiency);
+        trainerContact.setText(contact);
 
-        if (trainerId == null || trainerId.isEmpty()) {
-            Toast.makeText(this, "Error: Trainer ID is missing.", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
-        // 👉 Load trainer info
-        loadTrainerInfo();
-
-        // 👉 Fetch schedules
         fetchAvailableSchedules();
 
-        // 👉 Set listener for date selection
         listViewAvailableDates.setOnItemClickListener((parent, view, position, id) -> {
-            if (formattedDates != null && !formattedDates.isEmpty() && position < formattedDates.size()) {
-                String clickedDate = formattedDates.get(position);
-                String selectedDay = extractDayOfWeekFromDate(clickedDate);
-                showAvailableTimesPopup(selectedDay);
+            if (position < formattedDates.size()) {
+                String fullPreview = formattedDates.get(position); // format: 2025-4-25 - 8 AM, 10 AM
+                String[] parts = fullPreview.split(" - ");
+                if (parts.length >= 2) {
+                    selectedDateString = parts[0]; // e.g., 2025-4-25
+                    selectedDate.setText("Selected Date: " + selectedDateString);
+
+                    // Fetch appointments for selected date and update the popup
+                    appointmentsRef.orderByChild("date").equalTo(selectedDateString)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    List<String> originalSlots = dateToTimeSlotsMap.get(selectedDateString);
+                                    List<String> availableSlots = new ArrayList<>(originalSlots);
+
+                                    for (DataSnapshot appointment : snapshot.getChildren()) {
+                                        String bookedSlot = appointment.child("timeSlot").getValue(String.class);
+                                        String trainer = appointment.child("trainerId").getValue(String.class);
+
+                                        if (trainerId.equals(trainer)) {
+                                            availableSlots.remove(bookedSlot);
+                                        }
+                                    }
+
+                                    showAvailableTimesPopup(selectedDateString, availableSlots);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    Toast.makeText(TrainerProfileActivity.this, "Error loading time slots", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
             }
         });
 
-        // Set date button
-        btnSetDate.setOnClickListener(v -> fetchAvailableSchedules());
 
-        // Book now button
+
         btnBookNow.setOnClickListener(v -> {
-            if (spinnerAvailableTime.getAdapter() == null || spinnerAvailableTime.getAdapter().getCount() == 0) {
-                Toast.makeText(this, "No available time slots", Toast.LENGTH_SHORT).show();
+            if (selectedDateString.isEmpty()) {
+                Toast.makeText(this, "Please select a date", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            Object selectedItem = spinnerAvailableTime.getSelectedItem();
-            if (selectedItem == null) {
-                Toast.makeText(this, "Please select a time slot", Toast.LENGTH_SHORT).show();
+            if (selectedTimeSlot == null || selectedTimeSlot.isEmpty()) {
+                Toast.makeText(this, "Please select a time", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            String selectedTimeSlot = selectedItem.toString();
             bookAppointment(selectedTimeSlot);
         });
     }
-
-    private void loadTrainerInfo() {
-        trainersRef.child(trainerId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String name = snapshot.child("name").getValue(String.class);
-                String proficiency = snapshot.child("proficiency").getValue(String.class);
-                String contact = snapshot.child("contact").getValue(String.class);
-
-                trainerName.setText(name != null ? name : "No name");
-                trainerProficiency.setText(proficiency != null ? proficiency : "No proficiency");
-                trainerContact.setText(contact != null ? contact : "No contact");
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(TrainerProfileActivity.this, "Error loading trainer info", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-    private String extractDayOfWeekFromDate(String formattedDate) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMM dd yyyy", Locale.getDefault());
-            Date date = sdf.parse(formattedDate);
-            SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
-            return dayFormat.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
-
-
-    private void fetchAvailableSchedules() {
-
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-
-        String today = sdf.format(calendar.getTime());
-        calendar.add(Calendar.MONTH, 3); // Go 3 months forward
-        String threeMonthsLater = sdf.format(calendar.getTime());
-        appointmentsRef.orderByChild("date").startAt(today).endAt(threeMonthsLater)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        List<String> bookedDates = new ArrayList<>();
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                        String currentDate = sdf.format(new Date());
-
-                        // Get the booked dates
-                        for (DataSnapshot appointmentSnapshot : snapshot.getChildren()) {
-                            String appointmentDate = appointmentSnapshot.child("date").getValue(String.class);
-                            if (appointmentDate != null && appointmentDate.compareTo(currentDate) >= 0) {
-                                bookedDates.add(appointmentDate);
-                            }
-                        }
-
-                        // Fetch available schedule for the trainer
-                        trainersRef.child(trainerId).child("availableSchedule")
-                                .addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        // Check if the availableSchedule is stored as a Map of days with time slots
-                                        Map<String, Object> availableSchedule = (Map<String, Object>) snapshot.getValue();
-                                        List<String> availableDates = new ArrayList<>();  // To store the available dates
-
-                                        if (availableSchedule != null && !availableSchedule.isEmpty()) {
-                                            StringBuilder scheduleText = new StringBuilder();
-
-                                            // Get current date
-                                            Calendar calendar = Calendar.getInstance();
-                                            int currentYear = calendar.get(Calendar.YEAR);
-                                            int currentMonth = calendar.get(Calendar.MONTH);
-                                            int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-
-                                            // Loop through the available schedule
-                                            for (Map.Entry<String, Object> entry : availableSchedule.entrySet()) {
-                                                String dayOfWeek = entry.getKey(); // Day of the week (e.g., "Friday")
-                                                List<String> timeSlots = (List<String>) entry.getValue(); // List of time slots for that day
-
-                                                if (timeSlots != null && !timeSlots.isEmpty()) {
-                                                    for (String timeSlot : timeSlots) {
-                                                        // Build the schedule text
-                                                        scheduleText.append(dayOfWeek).append(": ").append(timeSlot).append("\n");
-
-                                                        // Calculate the actual date for the given day of the week
-                                                        String date = getNextDateForDayOfWeek(dayOfWeek, currentYear, currentMonth, currentDay);
-
-                                                        // Add the calculated date to the available dates list
-                                                        if (date != null && !bookedDates.contains(date)) {
-                                                            availableDates.add(date); // Only add if not already booked
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            // Display the available schedule text
-                                            trainerSchedule.setText(scheduleText.toString());
-                                        } else {
-                                            trainerSchedule.setText("No schedule available");
-                                        }
-
-                                        // Now update the available dates list in the ListView
-                                        if (!availableDates.isEmpty()) {
-                                            // Format available dates and days
-                                            List<String> formattedDates = new ArrayList<>();  // Declare formattedDates here
-                                            formattedDates.clear();
-                                            for (String date : availableDates) {
-                                                String formattedDate = formatDateWithDay(date);
-                                                formattedDates.add(formattedDate);
-                                            }
-
-                                            // Create and set the adapter
-                                            datesAdapter = new ArrayAdapter<>(TrainerProfileActivity.this, android.R.layout.simple_list_item_1, formattedDates);
-                                            listViewAvailableDates.setAdapter(datesAdapter);
-
-                                            // Set click listener for item clicks
-                                            listViewAvailableDates.setOnItemClickListener((parent, view, position, id) -> {
-                                                if (!formattedDates.isEmpty() && position < formattedDates.size()) {
-                                                    String clickedDate = formattedDates.get(position);
-                                                    // Handle the click event (e.g., navigate to the trainer's profile or schedule booking)
-                                                    Toast.makeText(TrainerProfileActivity.this, "Selected: " + clickedDate, Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-
-                                        } else {
-                                            // Handle case where there are no available dates
-                                            List<String> noDates = new ArrayList<>();
-                                            noDates.add("No available dates");
-                                            datesAdapter = new ArrayAdapter<>(TrainerProfileActivity.this, android.R.layout.simple_list_item_1, noDates);
-                                            listViewAvailableDates.setAdapter(datesAdapter);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-                                        Toast.makeText(TrainerProfileActivity.this, "Error fetching available dates.", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(TrainerProfileActivity.this, "Error fetching appointments.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-
-
-    // Helper function to calculate the next date for a given day of the week
-    private String getNextDateForDayOfWeek(String dayOfWeek, int year, int month, int dayOfMonth) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, dayOfMonth);
-
-        // Get the integer value for the day of the week (e.g., "Monday" = 2, "Friday" = 6)
-        int targetDayOfWeek = -1;
-        switch (dayOfWeek) {
-            case "Monday":
-                targetDayOfWeek = Calendar.MONDAY;
-                break;
-            case "Tuesday":
-                targetDayOfWeek = Calendar.TUESDAY;
-                break;
-            case "Wednesday":
-                targetDayOfWeek = Calendar.WEDNESDAY;
-                break;
-            case "Thursday":
-                targetDayOfWeek = Calendar.THURSDAY;
-                break;
-            case "Friday":
-                targetDayOfWeek = Calendar.FRIDAY;
-                break;
-            case "Saturday":
-                targetDayOfWeek = Calendar.SATURDAY;
-                break;
-            case "Sunday":
-                targetDayOfWeek = Calendar.SUNDAY;
-                break;
-        }
-
-        if (targetDayOfWeek != -1) {
-            // Find the next date for the target day of the week
-            int currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-            int daysToAdd = (targetDayOfWeek - currentDayOfWeek + 7) % 7; // To ensure the next occurrence
-
-            calendar.add(Calendar.DAY_OF_YEAR, daysToAdd);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            String calculatedDate = sdf.format(calendar.getTime());
-
-            // Check if the calculated date is within 3 months
-            Calendar now = Calendar.getInstance();
-            now.add(Calendar.MONTH, 3); // Add 3 months
-            if (calendar.before(now)) {
-                return calculatedDate;
-            }
-        }
-
-        return null;
-    }
-
-
-    // Helper function to format the date as "April 9, 2025" and display the day
-    private String formatDateWithDay(String date) {
-        try {
-            SimpleDateFormat sdfInput = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            Date parsedDate = sdfInput.parse(date);
-
-            SimpleDateFormat sdfOutput = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
-            String formattedDate = sdfOutput.format(parsedDate);
-
-            // Get the day of the week
-            SimpleDateFormat dayOfWeekFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
-            String dayOfWeek = dayOfWeekFormat.format(parsedDate);
-
-            return formattedDate + " (" + dayOfWeek + ")";
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return date;
-        }
-    }
-    // Load available times based on the day of the week
-    private void loadAvailableTimes(String dayOfWeek) {
-        // Assuming available times are set in the database for each day of the week
-        trainersRef.child(trainerId).child("availableSchedule")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        // Get the available schedule as a List (not Map)
-                        List<String> availableSchedule = (List<String>) snapshot.child("availableSchedule").getValue();
-                        if (availableSchedule != null && !availableSchedule.isEmpty()) {
-                            StringBuilder scheduleText = new StringBuilder();
-                            for (String schedule : availableSchedule) {
-                                scheduleText.append(schedule).append("\n");
-                            }
-                            // Display the schedule
-                            trainerSchedule.setText(scheduleText.toString());
-                        } else {
-                            trainerSchedule.setText("No schedule available");
-                        }
-
-                        // Update available dates list
-                        datesAdapter = new ArrayAdapter<>(TrainerProfileActivity.this, android.R.layout.simple_list_item_1, availableDates);
-                        listViewAvailableDates.setAdapter(datesAdapter);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(TrainerProfileActivity.this, "Error fetching available dates.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-    }
-
-    private void loadAvailableTimeSlots(String selectedDate) {
-        // Reference to the Firebase node where time slots are stored
-        DatabaseReference timeSlotsRef = FirebaseDatabase.getInstance().getReference("timeSlots");
-
-        // Query to get the available time slots for the selected date
-        timeSlotsRef.orderByChild("date").equalTo(selectedDate)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        List<String> availableTimeSlots = new ArrayList<>();
-                        if (snapshot.exists()) {
-                            // Iterate through the results and add time slots
-                            for (DataSnapshot timeSlotSnapshot : snapshot.getChildren()) {
-                                String timeSlot = timeSlotSnapshot.child("timeSlot").getValue(String.class);
-                                if (timeSlot != null) {
-                                    availableTimeSlots.add(timeSlot);
-                                }
-                            }
-                        } else {
-                            availableTimeSlots.add("No available slots");
-                        }
-
-                        // Update the spinner with available time slots
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(TrainerProfileActivity.this,
-                                android.R.layout.simple_spinner_item, availableTimeSlots);
-                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        spinnerAvailableTime.setAdapter(adapter);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(TrainerProfileActivity.this, "Failed to load time slots.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private String getDayOfWeek(int dayOfWeek) {
-        String[] days = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-        return days[dayOfWeek - 1];
-    }
-
-    private void bookAppointment(String selectedTimeSlot) {
-        String date = selectedDate.getText().toString().replace("Selected Date: ", "");
-        if (selectedTimeSlot == null || "No available slots".equals(selectedTimeSlot)) {
-            Toast.makeText(this, "No available time slot selected", Toast.LENGTH_SHORT).show();
+    private void showAvailableTimesPopup(String selectedDate, List<String> availableTimes) {
+        if (availableTimes == null || availableTimes.isEmpty()) {
+            Toast.makeText(this, "No available time slots", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Get the current user ID from FirebaseAuth
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Available Times on " + selectedDate);
 
-        // Check for duplicate appointment
-        appointmentsRef.orderByChild("trainerId").equalTo(trainerId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.d("FirebaseDebug", "Available schedule data: " + snapshot.child("availableSchedule").getValue());
-
-                boolean duplicate = false;
-                for (DataSnapshot appointment : snapshot.getChildren()) {
-                    String existingDate = appointment.child("date").getValue(String.class);
-                    String existingTimeSlot = appointment.child("timeSlot").getValue(String.class);
-                    if (date.equals(existingDate) && selectedTimeSlot.equals(existingTimeSlot)) {
-                        duplicate = true;
-                        break;
-                    }
-                }
-
-                if (duplicate) {
-                    Toast.makeText(TrainerProfileActivity.this, "Appointment already exists for this slot!", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Book appointment
-                    String appointmentId = UUID.randomUUID().toString();
-                    Map<String, Object> appointment = new HashMap<>();
-                    appointment.put("trainerId", trainerId);
-                    appointment.put("userId", userId); // Correctly setting userId here
-                    appointment.put("date", date);
-                    appointment.put("timeSlot", selectedTimeSlot);
-
-                    appointmentsRef.child(appointmentId).setValue(appointment)
-                            .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(TrainerProfileActivity.this, "Appointment booked!", Toast.LENGTH_SHORT).show();
-                                // Remove booked slot from spinner or list
-                                ArrayAdapter<String> adapter = (ArrayAdapter<String>) spinnerAvailableTime.getAdapter();
-                                adapter.remove(selectedTimeSlot);
-                                adapter.notifyDataSetChanged();
-                            })
-                            .addOnFailureListener(e -> Toast.makeText(TrainerProfileActivity.this, "Failed to book appointment.", Toast.LENGTH_SHORT).show());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(TrainerProfileActivity.this, "Failed to check appointments", Toast.LENGTH_SHORT).show();
-            }
+        String[] timeSlotArray = availableTimes.toArray(new String[0]);
+        builder.setItems(timeSlotArray, (dialog, which) -> {
+            selectedTimeSlot = timeSlotArray[which];
+            this.selectedDate.setText("Selected Date: " + selectedDate);
+            spinnerAvailableTime.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, availableTimes));
         });
+
+        builder.show();
     }
 
-    private void showAvailableTimesPopup(String selectedDay) {
-        // Inflate the dialog layout
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_available_times, null);
 
-        // Create the dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(dialogView);
+    private String extractDayOfWeekFromDate(String dateString) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d", Locale.getDefault());
+            Date date = sdf.parse(dateString);
+            if (date != null) {
+                return new SimpleDateFormat("EEEE", Locale.getDefault()).format(date);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+    private void fetchAvailableSchedules() {
+        // Declare dayToTimeSlots map at the method level
+        final Map<String, List<String>> dayToTimeSlots = new HashMap<>();
 
-        Button btnTime1 = dialogView.findViewById(R.id.btnTime1);
-        Button btnTime2 = dialogView.findViewById(R.id.btnTime2);
-        Button btnTime3 = dialogView.findViewById(R.id.btnTime3);
-
-        // Load available times for the selected day
-        trainersRef.child(trainerId).child("availableSchedule").child(selectedDay)
+        // Fetch available schedule
+        trainersRef.child(trainerId).child("availableSchedule")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        List<String> availableTimes = new ArrayList<>();
-                        for (DataSnapshot timeSnapshot : snapshot.getChildren()) {
-                            String time = timeSnapshot.getValue(String.class);
-                            if (time != null) {
-                                availableTimes.add(time);
+                    public void onDataChange(@NonNull DataSnapshot scheduleSnapshot) {
+                        for (DataSnapshot daySnap : scheduleSnapshot.getChildren()) {
+                            String day = daySnap.getKey();
+                            List<String> slots = new ArrayList<>();
+                            for (DataSnapshot timeSnap : daySnap.getChildren()) {
+                                slots.add(timeSnap.getValue(String.class));
                             }
+                            dayToTimeSlots.put(day, slots);
                         }
 
-                        // Enable/Disable buttons based on availability
-                        btnTime1.setEnabled(availableTimes.contains("Time Slot 1"));
-                        btnTime2.setEnabled(availableTimes.contains("Time Slot 2"));
-                        btnTime3.setEnabled(availableTimes.contains("Time Slot 3"));
+                        // Now fetch booked appointments
+                        appointmentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot appointmentsSnapshot) {
+                                dateToTimeSlotsMap.clear();
+                                formattedDates.clear();
 
-                        // Set button background color based on availability
-                        setButtonState(btnTime1, availableTimes.contains("Time Slot 1"));
-                        setButtonState(btnTime2, availableTimes.contains("Time Slot 2"));
-                        setButtonState(btnTime3, availableTimes.contains("Time Slot 3"));
+                                Calendar calendar = Calendar.getInstance();
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d", Locale.getDefault());
+                                SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
+
+                                // Build a map of booked slots by date
+                                Map<String, List<String>> bookedSlotsByDate = new HashMap<>();
+                                for (DataSnapshot appointment : appointmentsSnapshot.getChildren()) {
+                                    String date = appointment.child("date").getValue(String.class);
+                                    String time = appointment.child("timeSlot").getValue(String.class);
+                                    String trainer = appointment.child("trainerId").getValue(String.class);
+
+                                    if (trainerId.equals(trainer)) {
+                                        if (!bookedSlotsByDate.containsKey(date)) {
+                                            bookedSlotsByDate.put(date, new ArrayList<>());
+                                        }
+                                        bookedSlotsByDate.get(date).add(time);
+                                    }
+                                }
+
+                                // Loop through next 90 days and prepare available slots per date
+                                for (int i = 0; i < 90; i++) {
+                                    Date date = calendar.getTime();
+                                    String formattedDate = sdf.format(date);
+                                    String dayOfWeek = dayFormat.format(date);
+
+                                    if (dayToTimeSlots.containsKey(dayOfWeek)) {
+                                        List<String> allSlots = new ArrayList<>(dayToTimeSlots.get(dayOfWeek));
+                                        List<String> bookedSlots = bookedSlotsByDate.getOrDefault(formattedDate, new ArrayList<>());
+
+                                        allSlots.removeAll(bookedSlots); // Remove only booked slots for that date
+
+                                        if (!allSlots.isEmpty()) {
+                                            dateToTimeSlotsMap.put(formattedDate, allSlots);
+                                            String preview = formattedDate + " - " + String.join(", ", allSlots);
+                                            formattedDates.add(preview);
+                                        }
+                                    }
+
+                                    calendar.add(Calendar.DATE, 1);
+                                }
+
+                                // Update the list view
+                                ArrayAdapter<String> adapter = new ArrayAdapter<>(TrainerProfileActivity.this, android.R.layout.simple_list_item_1, formattedDates);
+                                listViewAvailableDates.setAdapter(adapter);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(TrainerProfileActivity.this, "Failed to fetch appointments", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(TrainerProfileActivity.this, "Failed to load available times", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TrainerProfileActivity.this, "Failed to fetch schedule", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-        // Add ClickListeners for the time buttons
-        btnTime1.setOnClickListener(v -> {
-            if (btnTime1.isEnabled()) {
-                bookAppointment("Time Slot 1");
-            }
-        });
-
-        btnTime2.setOnClickListener(v -> {
-            if (btnTime2.isEnabled()) {
-                bookAppointment("Time Slot 2");
-            }
-        });
-
-        btnTime3.setOnClickListener(v -> {
-            if (btnTime3.isEnabled()) {
-                bookAppointment("Time Slot 3");
-            }
-        });
-
-        // Show the dialog
-        AlertDialog dialog = builder.create();
-        dialog.show();
-
-
     }
-    private void setButtonState(Button button, boolean isAvailable) {
-        if (isAvailable) {
-            button.setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_green_light));
-        } else {
-            button.setBackgroundColor(ContextCompat.getColor(this, android.R.color.darker_gray));
-        }
+
+
+    private void showTimeSelectionPopup(List<String> availableTimes) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Time Slot");
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, availableTimes);
+        spinnerAvailableTime.setAdapter(adapter);
+
+        builder.setView(spinnerAvailableTime);
+        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+        builder.show();
     }
+
+    private void fetchAndDisplayTrainerRating(TextView trainerRatingView) {
+        DatabaseReference appointmentsRef = FirebaseDatabase.getInstance().getReference("Appointments");
+
+        appointmentsRef.orderByChild("trainerId").equalTo(trainerId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        int total = 0;
+                        int count = 0;
+
+                        for (DataSnapshot appointment : snapshot.getChildren()) {
+                            if (appointment.hasChild("rating")) {
+                                Long ratingValue = appointment.child("rating").getValue(Long.class);
+                                if (ratingValue != null) {
+                                    total += ratingValue;
+                                    count++;
+                                }
+                            }
+                        }
+
+                        if (count > 0) {
+                            double average = (double) total / count;
+                            // Display both average rating and the total number of ratings
+                            trainerRatingView.setText(String.format(Locale.getDefault(), "Rating: %.1f ★ (%d rates)", average, count));
+                        } else {
+                            trainerRatingView.setText("Rating: Not yet rated");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        trainerRatingView.setText("Rating: Error");
+                    }
+                });
+    }
+
+
+    private void bookAppointment(String timeSlot) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        appointmentsRef.orderByChild("date").equalTo(selectedDateString)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        boolean isAlreadyBooked = false;
+
+                        for (DataSnapshot appointment : snapshot.getChildren()) {
+                            String bookedTime = appointment.child("timeSlot").getValue(String.class);
+                            String trainer = appointment.child("trainerId").getValue(String.class);
+
+                            if (trainerId.equals(trainer) && timeSlot.equals(bookedTime)) {
+                                isAlreadyBooked = true;
+                                break;
+                            }
+                        }
+
+                        if (isAlreadyBooked) {
+                            Toast.makeText(TrainerProfileActivity.this, "Selected time is already booked.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            String appointmentId = UUID.randomUUID().toString();
+                            Map<String, Object> appointmentData = new HashMap<>();
+                            appointmentData.put("trainerId", trainerId);
+                            appointmentData.put("userId", userId);
+                            appointmentData.put("date", selectedDateString);
+                            appointmentData.put("timeSlot", timeSlot);
+                            appointmentData.put("status", "To be confirmed");  // ✅ Status field added
+
+                            appointmentsRef.child(appointmentId).setValue(appointmentData)
+                                    .addOnSuccessListener(aVoid -> {
+                                        Toast.makeText(TrainerProfileActivity.this, "Appointment booked!", Toast.LENGTH_SHORT).show();
+                                        fetchAvailableSchedules(); // refresh the schedule
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(TrainerProfileActivity.this, "Failed to book appointment", Toast.LENGTH_SHORT).show();
+                                        fetchAvailableSchedules();
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(TrainerProfileActivity.this, "Error checking slot availability", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+
 
 }
-
-
